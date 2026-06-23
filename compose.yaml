@@ -1,0 +1,27 @@
+services:
+  go:
+    build:
+      context: .
+      args:
+        GID: 1000
+        UID: 1000
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/home/go
+    environment:
+      PORT: 8000
+      DB_DSN: root:root@tcp(db:3306)/barterswap?parseTime=true
+    depends_on:
+      - db
+
+  db:
+    image: mariadb:11.8
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: barterswap
+
+volumes:
+  db_data:

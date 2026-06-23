@@ -1,0 +1,15 @@
+type: workspace
+model: workspace
+id: wk_eEegibfaCL
+createdAt: 2026-06-23T19:58:04.559085052
+updatedAt: 2026-06-23T19:58:04.559086742
+authentication: {}
+authenticationType: null
+description: ''
+headers: []
+name: Barterswap
+encryptionKeyChallenge: null
+settingValidateCertificates: true
+settingFollowRedirects: true
+settingRequestTimeout: 0
+settingDnsOverrides: []

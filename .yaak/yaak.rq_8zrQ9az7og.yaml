@@ -1,0 +1,18 @@
+type: http_request
+model: http_request
+id: rq_8zrQ9az7og
+createdAt: 2026-06-23T19:58:27.991805036
+updatedAt: 2026-06-23T19:59:07.104906253
+workspaceId: wk_eEegibfaCL
+folderId: null
+authentication: {}
+authenticationType: null
+body: {}
+bodyType: null
+description: ''
+headers: []
+method: GET
+name: Test Hello
+sortPriority: -1782244707990.0
+url: ${[ BASE_URL ]}
+urlParameters: []

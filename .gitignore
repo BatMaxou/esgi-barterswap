@@ -1,0 +1,12 @@
+# Binary
+/barterswap
+*.exe
+*.out
+
+# Tests
+*.test
+coverage.out
+
+# Cache
+.cache/
+.config/
