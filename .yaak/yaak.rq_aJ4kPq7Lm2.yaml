@@ -1,0 +1,24 @@
+type: http_request
+model: http_request
+id: rq_aJ4kPq7Lm2
+createdAt: 2026-06-25T20:00:00
+updatedAt: 2026-06-25T21:27:05.611844674
+workspaceId: wk_eEegibfaCL
+folderId: fl_iUWwwZeaHg
+authentication: {}
+authenticationType: null
+body:
+  text: |-
+    {
+      "pseudo": "Thierry",
+      "bio": "Bricoleur du dimanche",
+      "ville": "Paris"
+    }
+bodyType: application/json
+description: Cree un compte utilisateur (10 credits de bienvenue attribues automatiquement)
+headers: []
+method: POST
+name: Create User
+sortPriority: 0.0
+url: ${[ BASE_URL ]}/api/users
+urlParameters: []

@@ -1,0 +1,36 @@
+package main
+
+import (
+	"encoding/json"
+	"errors"
+	"net/http"
+)
+
+type createUserRequest struct {
+	Pseudo string `json:"pseudo"`
+	Bio    string `json:"bio"`
+	Ville  string `json:"ville"`
+}
+
+func (a *api) handleCreateUser(w http.ResponseWriter, r *http.Request) {
+	var requestBody createUserRequest
+	if err := json.NewDecoder(r.Body).Decode(&requestBody); err != nil {
+		writeError(w, http.StatusBadRequest, "corps de requete JSON invalide")
+
+		return
+	}
+
+	created, err := a.users.Register(r.Context(), requestBody.Pseudo, requestBody.Bio, requestBody.Ville)
+	if err != nil {
+		if errors.Is(err, ErrPseudoRequired) {
+			writeError(w, http.StatusBadRequest, err.Error())
+
+			return
+		}
+		writeError(w, http.StatusInternalServerError, "impossible de creer l'utilisateur")
+
+		return
+	}
+
+	writeJSON(w, http.StatusCreated, created)
+}

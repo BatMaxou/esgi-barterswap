@@ -18,6 +18,11 @@ down: ## Arrête et supprime les conteneurs
 	$(compose) down
 .PHONY: down
 
+reset: ## Détruit la base (volume) et la recrée vide
+	$(compose) down -v
+	${MAKE} up
+.PHONY: reset
+
 build: ## (Re)construit les images Docker
 	$(compose) build
 .PHONY: build
@@ -53,3 +58,7 @@ vet: ## Analyse statique du code
 tidy: ## Met à jour go.mod / go.sum
 	$(compose) run --rm go go mod tidy
 .PHONY: tidy
+
+exec-db: ## Ouvre une console dans le conteneur DB
+	$(compose) exec db mariadb -uroot -proot barterswap
+.PHONY: exec-db
