@@ -12,12 +12,12 @@ import (
 func TestHandleCreateUser(t *testing.T) {
 	t.Run("creation reussie -> 201", func(t *testing.T) {
 		app := &api{users: &fakeUserUseCase{
-			registerFunc: func(ctx context.Context, pseudo, bio, ville string) (User, error) {
+			registerFunc: func(ctx context.Context, pseudo, bio, city string) (User, error) {
 				return User{
 					ID:            42,
 					Pseudo:        pseudo,
 					Bio:           bio,
-					Ville:         ville,
+					City:          city,
 					Skills:        []Skill{},
 					CreditBalance: welcomeCredits,
 					CreatedAt:     "2026-01-01T00:00:00Z",
@@ -25,7 +25,7 @@ func TestHandleCreateUser(t *testing.T) {
 			},
 		}}
 
-		body := `{"pseudo":"Thierry","bio":"ma bio","ville":"Paris"}`
+		body := `{"pseudo":"Thierry","bio":"ma bio","city":"Paris"}`
 		req := httptest.NewRequest(http.MethodPost, "/api/users", strings.NewReader(body))
 		rec := httptest.NewRecorder()
 
@@ -52,7 +52,7 @@ func TestHandleCreateUser(t *testing.T) {
 
 	t.Run("pseudo vide -> 400", func(t *testing.T) {
 		app := &api{users: &fakeUserUseCase{
-			registerFunc: func(ctx context.Context, pseudo, bio, ville string) (User, error) {
+			registerFunc: func(ctx context.Context, pseudo, bio, city string) (User, error) {
 				return User{}, ErrPseudoRequired
 			},
 		}}

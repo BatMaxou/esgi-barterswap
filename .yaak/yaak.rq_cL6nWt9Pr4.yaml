@@ -12,7 +12,7 @@ body:
     {
       "pseudo": "Thierry",
       "bio": "Bricoleur passionne",
-      "ville": "Lyon"
+      "city": "Lyon"
     }
 bodyType: application/json
 description: Modifier son profil (auth via header X-User-ID ; seul le proprietaire peut se modifier)
@@ -20,6 +20,7 @@ headers:
   - enabled: true
     name: X-User-ID
     value: ${[ USER_ID ]}
+    id: hdr_userid_put
 method: PUT
 name: Update User Profile
 sortPriority: 2000.0

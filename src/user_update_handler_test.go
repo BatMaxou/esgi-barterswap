@@ -17,12 +17,12 @@ func TestHandleUpdateUser(t *testing.T) {
 
 	t.Run("mise a jour de son profil -> 200", func(t *testing.T) {
 		app := &api{users: &fakeUserUseCase{
-			updateProfileFunc: func(ctx context.Context, actorID, targetID int, pseudo, bio, ville string) (User, error) {
-				return User{ID: targetID, Pseudo: pseudo, Bio: bio, Ville: ville, CreditBalance: 10}, nil
+			updateProfileFunc: func(ctx context.Context, actorID, targetID int, pseudo, bio, city string) (User, error) {
+				return User{ID: targetID, Pseudo: pseudo, Bio: bio, City: city, CreditBalance: 10}, nil
 			},
 		}}
 
-		body := `{"pseudo":"Thierry","bio":"bio","ville":"Lyon"}`
+		body := `{"pseudo":"Thierry","bio":"bio","city":"Lyon"}`
 		req := httptest.NewRequest(http.MethodPut, "/api/users/5", strings.NewReader(body))
 		req.SetPathValue("id", "5")
 		req = withCurrentUser(req, User{ID: 5})
@@ -40,14 +40,14 @@ func TestHandleUpdateUser(t *testing.T) {
 		if got.Pseudo != "Thierry" {
 			t.Errorf("Pseudo = %q, attendu Thierry", got.Pseudo)
 		}
-		if got.Ville != "Lyon" {
-			t.Errorf("Ville = %q, attendu Lyon", got.Ville)
+		if got.City != "Lyon" {
+			t.Errorf("City = %q, attendu Lyon", got.City)
 		}
 	})
 
 	t.Run("profil d'un autre utilisateur -> 403", func(t *testing.T) {
 		app := &api{users: &fakeUserUseCase{
-			updateProfileFunc: func(ctx context.Context, actorID, targetID int, pseudo, bio, ville string) (User, error) {
+			updateProfileFunc: func(ctx context.Context, actorID, targetID int, pseudo, bio, city string) (User, error) {
 				return User{}, ErrForbidden
 			},
 		}}
@@ -66,7 +66,7 @@ func TestHandleUpdateUser(t *testing.T) {
 
 	t.Run("pseudo vide -> 400", func(t *testing.T) {
 		app := &api{users: &fakeUserUseCase{
-			updateProfileFunc: func(ctx context.Context, actorID, targetID int, pseudo, bio, ville string) (User, error) {
+			updateProfileFunc: func(ctx context.Context, actorID, targetID int, pseudo, bio, city string) (User, error) {
 				return User{}, ErrPseudoRequired
 			},
 		}}

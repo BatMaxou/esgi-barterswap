@@ -26,9 +26,12 @@ func main() {
 	transactor := NewTransactor(db)
 	userRepository := NewUserRepository()
 	creditTransactionRepository := NewCreditTransactionRepository()
-	useCase := NewUserUseCase(transactor, userRepository, creditTransactionRepository)
+	skillRepository := NewSkillRepository()
+	userUseCase := NewUserUseCase(transactor, userRepository, creditTransactionRepository)
+	skillUseCase := NewSkillUseCase(transactor, userRepository, skillRepository)
 	app := &api{
-		users: useCase,
+		users:  userUseCase,
+		skills: skillUseCase,
 	}
 
 	mux := http.NewServeMux()

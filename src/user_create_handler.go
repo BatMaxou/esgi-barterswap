@@ -9,7 +9,7 @@ import (
 type createUserRequest struct {
 	Pseudo string `json:"pseudo"`
 	Bio    string `json:"bio"`
-	Ville  string `json:"ville"`
+	City   string `json:"city"`
 }
 
 func (a *api) handleCreateUser(w http.ResponseWriter, r *http.Request) {
@@ -20,7 +20,7 @@ func (a *api) handleCreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	created, err := a.users.Register(r.Context(), requestBody.Pseudo, requestBody.Bio, requestBody.Ville)
+	created, err := a.users.Register(r.Context(), requestBody.Pseudo, requestBody.Bio, requestBody.City)
 	if err != nil {
 		if errors.Is(err, ErrPseudoRequired) {
 			writeError(w, http.StatusBadRequest, err.Error())
