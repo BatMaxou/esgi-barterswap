@@ -7,13 +7,7 @@ import (
 	"strconv"
 )
 
-type updateUserRequest struct {
-	Pseudo string `json:"pseudo"`
-	Bio    string `json:"bio"`
-	City   string `json:"city"`
-}
-
-func (a *api) handleUpdateUser(w http.ResponseWriter, r *http.Request) {
+func (a *api) handleDefineUserSkills(w http.ResponseWriter, r *http.Request) {
 	targetID, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil {
 		writeError(w, http.StatusBadRequest, "identifiant invalide")
@@ -28,28 +22,26 @@ func (a *api) handleUpdateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var requestBody updateUserRequest
+	var requestBody []Skill
 	if err := json.NewDecoder(r.Body).Decode(&requestBody); err != nil {
 		writeError(w, http.StatusBadRequest, "corps de requete JSON invalide")
 
 		return
 	}
 
-	updated, err := a.users.UpdateProfile(r.Context(), actor.ID, targetID, requestBody.Pseudo, requestBody.Bio, requestBody.City)
+	skills, err := a.skills.DefineSkills(r.Context(), actor.ID, targetID, requestBody)
 	if err != nil {
 		switch {
 		case errors.Is(err, ErrForbidden):
 			writeError(w, http.StatusForbidden, err.Error())
-		case errors.Is(err, ErrPseudoRequired):
+		case errors.Is(err, ErrSkillNameRequired), errors.Is(err, ErrSkillNameInvalid), errors.Is(err, ErrSkillLevelInvalid):
 			writeError(w, http.StatusBadRequest, err.Error())
-		case errors.Is(err, ErrUserNotFound):
-			writeError(w, http.StatusNotFound, err.Error())
 		default:
-			writeError(w, http.StatusInternalServerError, "impossible de modifier le profil")
+			writeError(w, http.StatusInternalServerError, "impossible de definir les competences")
 		}
 
 		return
 	}
 
-	writeJSON(w, http.StatusOK, updated)
+	writeJSON(w, http.StatusOK, skills)
 }

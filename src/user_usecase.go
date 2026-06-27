@@ -37,8 +37,8 @@ func NewUserUseCase(db database, users userRepository, creditTransactions credit
 	}
 }
 
-func (useCase *UserUseCase) Register(ctx context.Context, pseudo, bio, ville string) (User, error) {
-	user, err := NewUser(pseudo, bio, ville)
+func (useCase *UserUseCase) Register(ctx context.Context, pseudo, bio, city string) (User, error) {
+	user, err := NewUser(pseudo, bio, city)
 	if err != nil {
 		return User{}, err
 	}
@@ -53,7 +53,7 @@ func (useCase *UserUseCase) Register(ctx context.Context, pseudo, bio, ville str
 
 		welcomeTransaction := CreditTransaction{
 			UserID:    user.ID,
-			Montant:   welcomeCredits,
+			Amount:    welcomeCredits,
 			Type:      "earn",
 			CreatedAt: user.CreatedAt,
 		}
@@ -72,12 +72,12 @@ func (useCase *UserUseCase) Authenticate(ctx context.Context, id int) (User, err
 	return useCase.users.FindByID(ctx, exec, id)
 }
 
-func (useCase *UserUseCase) UpdateProfile(ctx context.Context, actorID, targetID int, pseudo, bio, ville string) (User, error) {
+func (useCase *UserUseCase) UpdateProfile(ctx context.Context, actorID, targetID int, pseudo, bio, city string) (User, error) {
 	if actorID != targetID {
 		return User{}, ErrForbidden
 	}
 
-	changes, err := NewUser(pseudo, bio, ville)
+	changes, err := NewUser(pseudo, bio, city)
 	if err != nil {
 		return User{}, err
 	}
@@ -91,7 +91,7 @@ func (useCase *UserUseCase) UpdateProfile(ctx context.Context, actorID, targetID
 
 	user.Pseudo = changes.Pseudo
 	user.Bio = changes.Bio
-	user.Ville = changes.Ville
+	user.City = changes.City
 
 	user, err = useCase.users.Update(ctx, exec, user)
 	if err != nil {

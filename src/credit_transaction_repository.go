@@ -24,9 +24,9 @@ func (repository *CreditTransactionRepository) Create(ctx context.Context, exec 
 	}
 
 	if _, err := exec.ExecContext(ctx,
-		`INSERT INTO credit_transactions (user_id, exchange_id, montant, type, created_at)
+		`INSERT INTO credit_transactions (user_id, exchange_id, amount, type, created_at)
 		 VALUES (?, ?, ?, ?, ?)`,
-		transaction.UserID, exchangeID, transaction.Montant, transaction.Type, createdAt,
+		transaction.UserID, exchangeID, transaction.Amount, transaction.Type, createdAt,
 	); err != nil {
 		return fmt.Errorf("insertion transaction de credits : %w", err)
 	}
@@ -38,7 +38,7 @@ func (repository *CreditTransactionRepository) BalanceByUserID(ctx context.Conte
 	var balance int
 
 	err := exec.QueryRowContext(ctx,
-		`SELECT COALESCE(SUM(montant), 0) FROM credit_transactions WHERE user_id = ?`,
+		`SELECT COALESCE(SUM(amount), 0) FROM credit_transactions WHERE user_id = ?`,
 		userID,
 	).Scan(&balance)
 	if err != nil {

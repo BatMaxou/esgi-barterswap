@@ -1,0 +1,18 @@
+type: http_request
+model: http_request
+id: rq_dM7oXu0Qs5
+createdAt: 2026-06-27T00:00:00
+updatedAt: 2026-06-27T00:00:00
+workspaceId: wk_eEegibfaCL
+folderId: fl_iUWwwZeaHg
+authentication: {}
+authenticationType: null
+body: {}
+bodyType: null
+description: Competences d'un utilisateur (public)
+headers: []
+method: GET
+name: Get User Skills
+sortPriority: 3000.0
+url: ${[ BASE_URL ]}/api/users/${[ USER_ID ]}/skills
+urlParameters: []

@@ -21,8 +21,8 @@ func (repository *UserRepository) Create(ctx context.Context, exec dbExecutor, u
 	}
 
 	insertResult, err := exec.ExecContext(ctx,
-		`INSERT INTO users (pseudo, bio, ville, created_at) VALUES (?, ?, ?, ?)`,
-		user.Pseudo, user.Bio, user.Ville, createdAt,
+		`INSERT INTO users (pseudo, bio, city, created_at) VALUES (?, ?, ?, ?)`,
+		user.Pseudo, user.Bio, user.City, createdAt,
 	)
 	if err != nil {
 		return User{}, fmt.Errorf("insertion utilisateur : %w", err)
@@ -39,8 +39,8 @@ func (repository *UserRepository) Create(ctx context.Context, exec dbExecutor, u
 
 func (repository *UserRepository) Update(ctx context.Context, exec dbExecutor, user User) (User, error) {
 	_, err := exec.ExecContext(ctx,
-		`UPDATE users SET pseudo = ?, bio = ?, ville = ? WHERE id = ?`,
-		user.Pseudo, user.Bio, user.Ville, user.ID,
+		`UPDATE users SET pseudo = ?, bio = ?, city = ? WHERE id = ?`,
+		user.Pseudo, user.Bio, user.City, user.ID,
 	)
 
 	if err != nil {
@@ -55,9 +55,9 @@ func (repository *UserRepository) FindByID(ctx context.Context, exec dbExecutor,
 	var createdAt time.Time
 
 	err := exec.QueryRowContext(ctx,
-		`SELECT id, pseudo, bio, ville, created_at FROM users WHERE id = ?`,
+		`SELECT id, pseudo, bio, city, created_at FROM users WHERE id = ?`,
 		id,
-	).Scan(&user.ID, &user.Pseudo, &user.Bio, &user.Ville, &createdAt)
+	).Scan(&user.ID, &user.Pseudo, &user.Bio, &user.City, &createdAt)
 	if errors.Is(err, sql.ErrNoRows) {
 		return User{}, ErrUserNotFound
 	}

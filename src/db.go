@@ -37,14 +37,21 @@ func migrate(ctx context.Context, db *sql.DB) error {
 			id         INT AUTO_INCREMENT PRIMARY KEY,
 			pseudo     VARCHAR(255) NOT NULL,
 			bio        TEXT,
-			ville      VARCHAR(255),
+			city      VARCHAR(255),
 			created_at DATETIME NOT NULL
+		)`,
+		`CREATE TABLE IF NOT EXISTS skills (
+			id      INT AUTO_INCREMENT PRIMARY KEY,
+			user_id INT NOT NULL,
+			name     VARCHAR(255) NOT NULL,
+			level  VARCHAR(32) NOT NULL,
+			CONSTRAINT fk_skill_user FOREIGN KEY (user_id) REFERENCES users(id)
 		)`,
 		`CREATE TABLE IF NOT EXISTS credit_transactions (
 			id          INT AUTO_INCREMENT PRIMARY KEY,
 			user_id     INT NOT NULL,
 			exchange_id INT NULL,
-			montant     INT NOT NULL,
+			amount     INT NOT NULL,
 			type        VARCHAR(32) NOT NULL,
 			created_at  DATETIME NOT NULL,
 			CONSTRAINT fk_credit_user FOREIGN KEY (user_id) REFERENCES users(id)

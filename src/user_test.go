@@ -10,11 +10,11 @@ func TestNewUser(t *testing.T) {
 		name       string
 		pseudo     string
 		bio        string
-		ville      string
+		city       string
 		wantErr    error
 		wantPseudo string
 	}{
-		{name: "pseudo valide", pseudo: "Thierry", bio: "ma bio", ville: "Paris", wantPseudo: "Thierry"},
+		{name: "pseudo valide", pseudo: "Thierry", bio: "ma bio", city: "Paris", wantPseudo: "Thierry"},
 		{name: "pseudo entoure d'espaces", pseudo: "  Alice  ", wantPseudo: "Alice"},
 		{name: "pseudo vide", pseudo: "", wantErr: ErrPseudoRequired},
 		{name: "pseudo espaces uniquement", pseudo: "   ", wantErr: ErrPseudoRequired},
@@ -22,7 +22,7 @@ func TestNewUser(t *testing.T) {
 
 	for _, testCase := range tests {
 		t.Run(testCase.name, func(t *testing.T) {
-			user, err := NewUser(testCase.pseudo, testCase.bio, testCase.ville)
+			user, err := NewUser(testCase.pseudo, testCase.bio, testCase.city)
 
 			if testCase.wantErr != nil {
 				if !errors.Is(err, testCase.wantErr) {

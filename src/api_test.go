@@ -9,14 +9,14 @@ import (
 )
 
 type fakeUserUseCase struct {
-	registerFunc      func(ctx context.Context, pseudo, bio, ville string) (User, error)
+	registerFunc      func(ctx context.Context, pseudo, bio, city string) (User, error)
 	getProfileFunc    func(ctx context.Context, id int) (User, error)
 	authenticateFunc  func(ctx context.Context, id int) (User, error)
-	updateProfileFunc func(ctx context.Context, actorID, targetID int, pseudo, bio, ville string) (User, error)
+	updateProfileFunc func(ctx context.Context, actorID, targetID int, pseudo, bio, city string) (User, error)
 }
 
-func (fake *fakeUserUseCase) Register(ctx context.Context, pseudo, bio, ville string) (User, error) {
-	return fake.registerFunc(ctx, pseudo, bio, ville)
+func (fake *fakeUserUseCase) Register(ctx context.Context, pseudo, bio, city string) (User, error) {
+	return fake.registerFunc(ctx, pseudo, bio, city)
 }
 
 func (fake *fakeUserUseCase) GetProfile(ctx context.Context, id int) (User, error) {
@@ -27,8 +27,21 @@ func (fake *fakeUserUseCase) Authenticate(ctx context.Context, id int) (User, er
 	return fake.authenticateFunc(ctx, id)
 }
 
-func (fake *fakeUserUseCase) UpdateProfile(ctx context.Context, actorID, targetID int, pseudo, bio, ville string) (User, error) {
-	return fake.updateProfileFunc(ctx, actorID, targetID, pseudo, bio, ville)
+func (fake *fakeUserUseCase) UpdateProfile(ctx context.Context, actorID, targetID int, pseudo, bio, city string) (User, error) {
+	return fake.updateProfileFunc(ctx, actorID, targetID, pseudo, bio, city)
+}
+
+type fakeSkillUseCase struct {
+	listSkillsFunc   func(ctx context.Context, userID int) ([]Skill, error)
+	defineSkillsFunc func(ctx context.Context, actorID, targetID int, skills []Skill) ([]Skill, error)
+}
+
+func (fake *fakeSkillUseCase) ListSkills(ctx context.Context, userID int) ([]Skill, error) {
+	return fake.listSkillsFunc(ctx, userID)
+}
+
+func (fake *fakeSkillUseCase) DefineSkills(ctx context.Context, actorID, targetID int, skills []Skill) ([]Skill, error) {
+	return fake.defineSkillsFunc(ctx, actorID, targetID, skills)
 }
 
 func TestUpdateUserRouting(t *testing.T) {
@@ -36,7 +49,7 @@ func TestUpdateUserRouting(t *testing.T) {
 		authenticateFunc: func(ctx context.Context, id int) (User, error) {
 			return User{ID: id, Pseudo: "Thierry"}, nil
 		},
-		updateProfileFunc: func(ctx context.Context, actorID, targetID int, pseudo, bio, ville string) (User, error) {
+		updateProfileFunc: func(ctx context.Context, actorID, targetID int, pseudo, bio, city string) (User, error) {
 			return User{ID: targetID, Pseudo: pseudo}, nil
 		},
 	}}

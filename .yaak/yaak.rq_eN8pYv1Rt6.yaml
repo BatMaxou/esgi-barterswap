@@ -1,0 +1,27 @@
+type: http_request
+model: http_request
+id: rq_eN8pYv1Rt6
+createdAt: 2026-06-27T00:00:00
+updatedAt: 2026-06-27T00:00:00
+workspaceId: wk_eEegibfaCL
+folderId: fl_iUWwwZeaHg
+authentication: {}
+authenticationType: null
+body:
+  text: |-
+    [
+      { "name": "Jardinage", "level": "expert" },
+      { "name": "Cuisine", "level": "intermédiaire" }
+    ]
+bodyType: application/json
+description: Definir ses competences (auth via header X-User-ID ; ecrase les competences existantes ; champs name et level dans les enums du Sujet)
+headers:
+  - enabled: true
+    name: X-User-ID
+    value: ${[ USER_ID ]}
+    id: hdr_userid_skills
+method: PUT
+name: Define User Skills
+sortPriority: 4000.0
+url: ${[ BASE_URL ]}/api/users/${[ USER_ID ]}/skills
+urlParameters: []

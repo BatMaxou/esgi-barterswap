@@ -88,8 +88,8 @@ func TestUserUseCaseRegister(t *testing.T) {
 		if creditTransactions.transaction.UserID != 7 {
 			t.Errorf("transaction UserID = %d, attendu 7", creditTransactions.transaction.UserID)
 		}
-		if creditTransactions.transaction.Montant != welcomeCredits {
-			t.Errorf("montant de la transaction = %d, attendu %d", creditTransactions.transaction.Montant, welcomeCredits)
+		if creditTransactions.transaction.Amount != welcomeCredits {
+			t.Errorf("amount de la transaction = %d, attendu %d", creditTransactions.transaction.Amount, welcomeCredits)
 		}
 		if creditTransactions.transaction.Type != "earn" {
 			t.Errorf("type de la transaction = %q, attendu \"earn\"", creditTransactions.transaction.Type)
@@ -182,8 +182,8 @@ func TestUserUseCaseUpdateProfile(t *testing.T) {
 		if user.Pseudo != "Thierry" {
 			t.Errorf("Pseudo = %q, attendu Thierry (trim applique)", user.Pseudo)
 		}
-		if user.Ville != "Lyon" {
-			t.Errorf("Ville = %q, attendu Lyon", user.Ville)
+		if user.City != "Lyon" {
+			t.Errorf("City = %q, attendu Lyon", user.City)
 		}
 		if user.CreditBalance != 12 {
 			t.Errorf("CreditBalance = %d, attendu 12 (solde recalcule)", user.CreditBalance)

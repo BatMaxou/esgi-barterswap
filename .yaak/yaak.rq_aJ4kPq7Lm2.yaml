@@ -12,7 +12,7 @@ body:
     {
       "pseudo": "Thierry",
       "bio": "Bricoleur du dimanche",
-      "ville": "Paris"
+      "city": "Paris"
     }
 bodyType: application/json
 description: Cree un compte utilisateur (10 credits de bienvenue attribues automatiquement)
