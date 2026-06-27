@@ -10,6 +10,8 @@ var ErrPseudoRequired = errors.New("le pseudo est obligatoire")
 
 var ErrUserNotFound = errors.New("utilisateur introuvable")
 
+var ErrForbidden = errors.New("action non autorisee")
+
 type User struct {
 	ID            int     `json:"id"`
 	Pseudo        string  `json:"pseudo"`

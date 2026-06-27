@@ -2,7 +2,7 @@ type: http_request
 model: http_request
 id: rq_bK5mRq8Mn3
 createdAt: 2026-06-25T21:25:00
-updatedAt: 2026-06-25T21:28:02.263901550
+updatedAt: 2026-06-27T13:41:00.089785697
 workspaceId: wk_eEegibfaCL
 folderId: fl_iUWwwZeaHg
 authentication: {}
@@ -14,5 +14,5 @@ headers: []
 method: GET
 name: Get User Profile
 sortPriority: 1000.0
-url: ${[ BASE_URL ]}/api/users/1
+url: ${[ BASE_URL ]}/api/users/${[ USER_ID ]}
 urlParameters: []

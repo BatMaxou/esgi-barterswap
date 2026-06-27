@@ -8,9 +8,12 @@ import (
 
 type fakeUserRepository struct {
 	createCalled bool
+	updateCalled bool
 	user         User
+	updatedUser  User
 	createErr    error
 	findErr      error
+	updateErr    error
 }
 
 func (fake *fakeUserRepository) Create(ctx context.Context, exec dbExecutor, user User) (User, error) {
@@ -27,6 +30,15 @@ func (fake *fakeUserRepository) FindByID(ctx context.Context, exec dbExecutor, i
 		return User{}, fake.findErr
 	}
 	return fake.user, nil
+}
+
+func (fake *fakeUserRepository) Update(ctx context.Context, exec dbExecutor, user User) (User, error) {
+	fake.updateCalled = true
+	if fake.updateErr != nil {
+		return User{}, fake.updateErr
+	}
+	fake.updatedUser = user
+	return user, nil
 }
 
 type fakeCreditTransactionRepository struct {
@@ -125,6 +137,85 @@ func TestUserUseCaseGetProfile(t *testing.T) {
 		_, err := useCase.GetProfile(context.Background(), 999)
 		if !errors.Is(err, ErrUserNotFound) {
 			t.Fatalf("erreur = %v, attendue ErrUserNotFound", err)
+		}
+	})
+}
+
+func TestUserUseCaseAuthenticate(t *testing.T) {
+	t.Run("utilisateur existant", func(t *testing.T) {
+		users := &fakeUserRepository{user: User{ID: 5, Pseudo: "Thierry"}}
+		useCase := NewUserUseCase(&fakeDatabase{}, users, &fakeCreditTransactionRepository{})
+
+		user, err := useCase.Authenticate(context.Background(), 5)
+		if err != nil {
+			t.Fatalf("erreur inattendue : %v", err)
+		}
+		if user.ID != 5 {
+			t.Errorf("ID = %d, attendu 5", user.ID)
+		}
+	})
+
+	t.Run("utilisateur introuvable", func(t *testing.T) {
+		users := &fakeUserRepository{findErr: ErrUserNotFound}
+		useCase := NewUserUseCase(&fakeDatabase{}, users, &fakeCreditTransactionRepository{})
+
+		_, err := useCase.Authenticate(context.Background(), 999)
+		if !errors.Is(err, ErrUserNotFound) {
+			t.Fatalf("erreur = %v, attendue ErrUserNotFound", err)
+		}
+	})
+}
+
+func TestUserUseCaseUpdateProfile(t *testing.T) {
+	t.Run("mise a jour de son propre profil", func(t *testing.T) {
+		users := &fakeUserRepository{user: User{ID: 5, Pseudo: "Ancien", CreatedAt: "2026-01-01T00:00:00Z"}}
+		creditTransactions := &fakeCreditTransactionRepository{balance: 12}
+		useCase := NewUserUseCase(&fakeDatabase{}, users, creditTransactions)
+
+		user, err := useCase.UpdateProfile(context.Background(), 5, 5, "  Thierry  ", "nouvelle bio", "Lyon")
+		if err != nil {
+			t.Fatalf("erreur inattendue : %v", err)
+		}
+		if !users.updateCalled {
+			t.Error("le repository Update doit etre appele")
+		}
+		if user.Pseudo != "Thierry" {
+			t.Errorf("Pseudo = %q, attendu Thierry (trim applique)", user.Pseudo)
+		}
+		if user.Ville != "Lyon" {
+			t.Errorf("Ville = %q, attendu Lyon", user.Ville)
+		}
+		if user.CreditBalance != 12 {
+			t.Errorf("CreditBalance = %d, attendu 12 (solde recalcule)", user.CreditBalance)
+		}
+		if user.CreatedAt != "2026-01-01T00:00:00Z" {
+			t.Errorf("CreatedAt = %q, doit etre preserve", user.CreatedAt)
+		}
+	})
+
+	t.Run("modifier le profil d'un autre utilisateur renvoie ErrForbidden", func(t *testing.T) {
+		users := &fakeUserRepository{user: User{ID: 5}}
+		useCase := NewUserUseCase(&fakeDatabase{}, users, &fakeCreditTransactionRepository{})
+
+		_, err := useCase.UpdateProfile(context.Background(), 5, 9, "Thierry", "", "")
+		if !errors.Is(err, ErrForbidden) {
+			t.Fatalf("erreur = %v, attendue ErrForbidden", err)
+		}
+		if users.updateCalled {
+			t.Error("aucune ecriture ne doit avoir lieu en cas d'acces interdit")
+		}
+	})
+
+	t.Run("pseudo vide renvoie ErrPseudoRequired", func(t *testing.T) {
+		users := &fakeUserRepository{user: User{ID: 5}}
+		useCase := NewUserUseCase(&fakeDatabase{}, users, &fakeCreditTransactionRepository{})
+
+		_, err := useCase.UpdateProfile(context.Background(), 5, 5, "   ", "", "")
+		if !errors.Is(err, ErrPseudoRequired) {
+			t.Fatalf("erreur = %v, attendue ErrPseudoRequired", err)
+		}
+		if users.updateCalled {
+			t.Error("aucune ecriture ne doit avoir lieu quand la validation echoue")
 		}
 	})
 }
