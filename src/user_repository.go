@@ -37,6 +37,19 @@ func (repository *UserRepository) Create(ctx context.Context, exec dbExecutor, u
 	return user, nil
 }
 
+func (repository *UserRepository) Update(ctx context.Context, exec dbExecutor, user User) (User, error) {
+	_, err := exec.ExecContext(ctx,
+		`UPDATE users SET pseudo = ?, bio = ?, ville = ? WHERE id = ?`,
+		user.Pseudo, user.Bio, user.Ville, user.ID,
+	)
+
+	if err != nil {
+		return User{}, fmt.Errorf("mise a jour utilisateur : %w", err)
+	}
+
+	return user, nil
+}
+
 func (repository *UserRepository) FindByID(ctx context.Context, exec dbExecutor, id int) (User, error) {
 	var user User
 	var createdAt time.Time

@@ -1,13 +1,18 @@
 package main
 
-import "context"
+import (
+	"context"
+	"net/http"
+	"net/http/httptest"
+	"strings"
+	"testing"
+)
 
-// fakeUserUseCase est un faux use case partage par les tests des handlers
-// utilisateurs (api.users est type par l'interface userUseCase). Chaque test ne
-// renseigne que la fonction dont il a besoin.
 type fakeUserUseCase struct {
-	registerFunc   func(ctx context.Context, pseudo, bio, ville string) (User, error)
-	getProfileFunc func(ctx context.Context, id int) (User, error)
+	registerFunc      func(ctx context.Context, pseudo, bio, ville string) (User, error)
+	getProfileFunc    func(ctx context.Context, id int) (User, error)
+	authenticateFunc  func(ctx context.Context, id int) (User, error)
+	updateProfileFunc func(ctx context.Context, actorID, targetID int, pseudo, bio, ville string) (User, error)
 }
 
 func (fake *fakeUserUseCase) Register(ctx context.Context, pseudo, bio, ville string) (User, error) {
@@ -16,4 +21,48 @@ func (fake *fakeUserUseCase) Register(ctx context.Context, pseudo, bio, ville st
 
 func (fake *fakeUserUseCase) GetProfile(ctx context.Context, id int) (User, error) {
 	return fake.getProfileFunc(ctx, id)
+}
+
+func (fake *fakeUserUseCase) Authenticate(ctx context.Context, id int) (User, error) {
+	return fake.authenticateFunc(ctx, id)
+}
+
+func (fake *fakeUserUseCase) UpdateProfile(ctx context.Context, actorID, targetID int, pseudo, bio, ville string) (User, error) {
+	return fake.updateProfileFunc(ctx, actorID, targetID, pseudo, bio, ville)
+}
+
+func TestUpdateUserRouting(t *testing.T) {
+	app := &api{users: &fakeUserUseCase{
+		authenticateFunc: func(ctx context.Context, id int) (User, error) {
+			return User{ID: id, Pseudo: "Thierry"}, nil
+		},
+		updateProfileFunc: func(ctx context.Context, actorID, targetID int, pseudo, bio, ville string) (User, error) {
+			return User{ID: targetID, Pseudo: pseudo}, nil
+		},
+	}}
+	mux := http.NewServeMux()
+	app.registerRoutes(mux)
+
+	t.Run("sans header X-User-ID -> 401", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodPut, "/api/users/5", strings.NewReader(`{"pseudo":"Thierry"}`))
+		rec := httptest.NewRecorder()
+
+		mux.ServeHTTP(rec, req)
+
+		if rec.Code != http.StatusUnauthorized {
+			t.Fatalf("code = %d, attendu %d", rec.Code, http.StatusUnauthorized)
+		}
+	})
+
+	t.Run("avec header X-User-ID valide -> 200", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodPut, "/api/users/5", strings.NewReader(`{"pseudo":"Thierry"}`))
+		req.Header.Set("X-User-ID", "5")
+		rec := httptest.NewRecorder()
+
+		mux.ServeHTTP(rec, req)
+
+		if rec.Code != http.StatusOK {
+			t.Fatalf("code = %d, attendu %d", rec.Code, http.StatusOK)
+		}
+	})
 }

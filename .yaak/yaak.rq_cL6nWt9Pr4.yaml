@@ -1,0 +1,27 @@
+type: http_request
+model: http_request
+id: rq_cL6nWt9Pr4
+createdAt: 2026-06-27T00:00:00
+updatedAt: 2026-06-27T00:00:00
+workspaceId: wk_eEegibfaCL
+folderId: fl_iUWwwZeaHg
+authentication: {}
+authenticationType: null
+body:
+  text: |-
+    {
+      "pseudo": "Thierry",
+      "bio": "Bricoleur passionne",
+      "ville": "Lyon"
+    }
+bodyType: application/json
+description: Modifier son profil (auth via header X-User-ID ; seul le proprietaire peut se modifier)
+headers:
+  - enabled: true
+    name: X-User-ID
+    value: ${[ USER_ID ]}
+method: PUT
+name: Update User Profile
+sortPriority: 2000.0
+url: ${[ BASE_URL ]}/api/users/${[ USER_ID ]}
+urlParameters: []

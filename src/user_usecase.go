@@ -10,6 +10,7 @@ const welcomeCredits = 10
 type userRepository interface {
 	Create(ctx context.Context, exec dbExecutor, user User) (User, error)
 	FindByID(ctx context.Context, exec dbExecutor, id int) (User, error)
+	Update(ctx context.Context, exec dbExecutor, user User) (User, error)
 }
 
 type creditTransactionRepository interface {
@@ -61,6 +62,47 @@ func (useCase *UserUseCase) Register(ctx context.Context, pseudo, bio, ville str
 	if err != nil {
 		return User{}, fmt.Errorf("creation de l'utilisateur : %w", err)
 	}
+
+	return user, nil
+}
+
+func (useCase *UserUseCase) Authenticate(ctx context.Context, id int) (User, error) {
+	exec := useCase.db.Executor()
+
+	return useCase.users.FindByID(ctx, exec, id)
+}
+
+func (useCase *UserUseCase) UpdateProfile(ctx context.Context, actorID, targetID int, pseudo, bio, ville string) (User, error) {
+	if actorID != targetID {
+		return User{}, ErrForbidden
+	}
+
+	changes, err := NewUser(pseudo, bio, ville)
+	if err != nil {
+		return User{}, err
+	}
+
+	exec := useCase.db.Executor()
+
+	user, err := useCase.users.FindByID(ctx, exec, targetID)
+	if err != nil {
+		return User{}, err
+	}
+
+	user.Pseudo = changes.Pseudo
+	user.Bio = changes.Bio
+	user.Ville = changes.Ville
+
+	user, err = useCase.users.Update(ctx, exec, user)
+	if err != nil {
+		return User{}, fmt.Errorf("mise a jour du profil : %w", err)
+	}
+
+	balance, err := useCase.creditTransactions.BalanceByUserID(ctx, exec, targetID)
+	if err != nil {
+		return User{}, fmt.Errorf("calcul du solde : %w", err)
+	}
+	user.CreditBalance = balance
 
 	return user, nil
 }
