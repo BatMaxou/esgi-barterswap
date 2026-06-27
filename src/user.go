@@ -1,13 +1,14 @@
 package main
 
-import "time"
+import (
+	"errors"
+	"strings"
+	"time"
+)
 
-const welcomeCredits = 10
+var ErrPseudoRequired = errors.New("le pseudo est obligatoire")
 
-type Skill struct {
-	Nom    string `json:"nom"`
-	Niveau string `json:"niveau"`
-}
+var ErrUserNotFound = errors.New("utilisateur introuvable")
 
 type User struct {
 	ID            int     `json:"id"`
@@ -19,13 +20,17 @@ type User struct {
 	CreatedAt     string  `json:"created_at"`
 }
 
-func NewUser(pseudo, bio, ville string) User {
-	return User{
-		Pseudo:        pseudo,
-		Bio:           bio,
-		Ville:         ville,
-		Skills:        []Skill{},
-		CreditBalance: welcomeCredits,
-		CreatedAt:     time.Now().Format(time.RFC3339),
+func NewUser(pseudo, bio, ville string) (User, error) {
+	pseudo = strings.TrimSpace(pseudo)
+	if pseudo == "" {
+		return User{}, ErrPseudoRequired
 	}
+
+	return User{
+		Pseudo:    pseudo,
+		Bio:       strings.TrimSpace(bio),
+		Ville:     strings.TrimSpace(ville),
+		Skills:    []Skill{},
+		CreatedAt: time.Now().UTC().Format(time.RFC3339),
+	}, nil
 }
