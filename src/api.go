@@ -35,11 +35,18 @@ type exchangeUseCase interface {
 	Cancel(ctx context.Context, actorID, exchangeID int) (Exchange, error)
 }
 
+type reviewUseCase interface {
+	Create(ctx context.Context, actorID, exchangeID, rating int, comment string) (Review, error)
+	ListForUser(ctx context.Context, userID int) ([]Review, error)
+	ListForService(ctx context.Context, serviceID int) ([]Review, error)
+}
+
 type api struct {
 	users     userUseCase
 	skills    skillUseCase
 	services  serviceUseCase
 	exchanges exchangeUseCase
+	reviews   reviewUseCase
 }
 
 func (a *api) registerRoutes(mux *http.ServeMux) {
@@ -64,4 +71,8 @@ func (a *api) registerRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("PUT /api/exchanges/{id}/reject", a.requireAuth(a.handleRejectExchange))
 	mux.HandleFunc("PUT /api/exchanges/{id}/complete", a.requireAuth(a.handleCompleteExchange))
 	mux.HandleFunc("PUT /api/exchanges/{id}/cancel", a.requireAuth(a.handleCancelExchange))
+
+	mux.HandleFunc("POST /api/exchanges/{id}/review", a.requireAuth(a.handleCreateReview))
+	mux.HandleFunc("GET /api/users/{id}/reviews", a.handleListUserReviews)
+	mux.HandleFunc("GET /api/services/{id}/reviews", a.handleListServiceReviews)
 }

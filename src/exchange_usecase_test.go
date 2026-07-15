@@ -18,6 +18,8 @@ type fakeExchangeRepository struct {
 	updateStatusErr    error
 	hasActiveErr       error
 	listErr            error
+	serviceExchanges   []Exchange
+	listByServiceErr   error
 }
 
 func (fake *fakeExchangeRepository) Create(ctx context.Context, exec dbExecutor, exchange Exchange) (Exchange, error) {
@@ -63,4 +65,11 @@ func (fake *fakeExchangeRepository) List(ctx context.Context, exec dbExecutor, f
 		return nil, fake.listErr
 	}
 	return fake.exchanges, nil
+}
+
+func (fake *fakeExchangeRepository) ListByServiceID(ctx context.Context, exec dbExecutor, serviceID int) ([]Exchange, error) {
+	if fake.listByServiceErr != nil {
+		return nil, fake.listByServiceErr
+	}
+	return fake.serviceExchanges, nil
 }

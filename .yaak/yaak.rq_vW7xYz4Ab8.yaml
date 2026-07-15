@@ -1,0 +1,18 @@
+type: http_request
+model: http_request
+id: rq_vW7xYz4Ab8
+createdAt: 2026-07-15T00:00:00
+updatedAt: 2026-07-15T00:00:00
+workspaceId: wk_eEegibfaCL
+folderId: fl_U5vLq9Np3y
+authentication: {}
+authenticationType: null
+body: {}
+bodyType: null
+description: Reviews linked to a service via its exchanges (public; 404 if service not found)
+headers: []
+method: GET
+name: List Service Reviews
+sortPriority: 2000.0
+url: ${[ BASE_URL ]}/api/services/${[ SERVICE_ID ]}/reviews
+urlParameters: []

@@ -33,11 +33,14 @@ func main() {
 	skillUseCase := NewSkillUseCase(transactor, userRepository, skillRepository)
 	serviceUseCase := NewServiceUseCase(transactor, serviceRepository)
 	exchangeUseCase := NewExchangeUseCase(transactor, exchangeRepository, serviceRepository, creditTransactionRepository)
+	reviewRepository := NewReviewRepository()
+	reviewUseCase := NewReviewUseCase(transactor, reviewRepository, exchangeRepository, userRepository, serviceRepository)
 	app := &api{
 		users:     userUseCase,
 		skills:    skillUseCase,
 		services:  serviceUseCase,
 		exchanges: exchangeUseCase,
+		reviews:   reviewUseCase,
 	}
 
 	mux := http.NewServeMux()
