@@ -1,0 +1,32 @@
+type: http_request
+model: http_request
+id: rq_iR4vYf5Zg0
+createdAt: 2026-07-15T00:00:00
+updatedAt: 2026-07-15T00:00:00
+workspaceId: wk_eEegibfaCL
+folderId: fl_Sv7RqKm3Np
+authentication: {}
+authenticationType: null
+body:
+  text: |-
+    {
+      "title": "Cours de Go avance",
+      "description": "Concurrence et channels",
+      "category": "Informatique",
+      "duration_minutes": 90,
+      "credits": 3,
+      "city": "Lyon",
+      "active": true
+    }
+bodyType: application/json
+description: Update your ad (auth via X-User-ID header; owner only; active is optional to enable/disable)
+headers:
+  - enabled: true
+    name: X-User-ID
+    value: ${[ USER_ID ]}
+    id: hdr_userid_service_update
+method: PUT
+name: Update Service
+sortPriority: 3000.0
+url: ${[ BASE_URL ]}/api/services/${[ SERVICE_ID ]}
+urlParameters: []

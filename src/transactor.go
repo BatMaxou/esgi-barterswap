@@ -27,7 +27,7 @@ func (transactor *Transactor) Executor() dbExecutor {
 func (transactor *Transactor) WithinTransaction(ctx context.Context, fn func(exec dbExecutor) error) error {
 	tx, err := transactor.db.BeginTx(ctx, nil)
 	if err != nil {
-		return fmt.Errorf("debut transaction : %w", err)
+		return fmt.Errorf("begin transaction: %w", err)
 	}
 	defer tx.Rollback()
 
@@ -36,7 +36,7 @@ func (transactor *Transactor) WithinTransaction(ctx context.Context, fn func(exe
 	}
 
 	if err := tx.Commit(); err != nil {
-		return fmt.Errorf("commit : %w", err)
+		return fmt.Errorf("commit: %w", err)
 	}
 
 	return nil

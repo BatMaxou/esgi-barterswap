@@ -1,0 +1,18 @@
+type: http_request
+model: http_request
+id: rq_hQ3uXe4Yf9
+createdAt: 2026-07-15T00:00:00
+updatedAt: 2026-07-15T00:00:00
+workspaceId: wk_eEegibfaCL
+folderId: fl_Sv7RqKm3Np
+authentication: {}
+authenticationType: null
+body: {}
+bodyType: null
+description: Ad details (public; 404 if not found)
+headers: []
+method: GET
+name: Get Service
+sortPriority: 2000.0
+url: ${[ BASE_URL ]}/api/services/${[ SERVICE_ID ]}
+urlParameters: []

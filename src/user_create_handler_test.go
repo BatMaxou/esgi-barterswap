@@ -10,7 +10,7 @@ import (
 )
 
 func TestHandleCreateUser(t *testing.T) {
-	t.Run("creation reussie -> 201", func(t *testing.T) {
+	t.Run("successful creation -> 201", func(t *testing.T) {
 		app := &api{users: &fakeUserUseCase{
 			registerFunc: func(ctx context.Context, pseudo, bio, city string) (User, error) {
 				return User{
@@ -25,32 +25,32 @@ func TestHandleCreateUser(t *testing.T) {
 			},
 		}}
 
-		body := `{"pseudo":"Thierry","bio":"ma bio","city":"Paris"}`
+		body := `{"pseudo":"Thierry","bio":"my bio","city":"Paris"}`
 		req := httptest.NewRequest(http.MethodPost, "/api/users", strings.NewReader(body))
 		rec := httptest.NewRecorder()
 
 		app.handleCreateUser(rec, req)
 
 		if rec.Code != http.StatusCreated {
-			t.Fatalf("code = %d, attendu %d", rec.Code, http.StatusCreated)
+			t.Fatalf("status = %d, want %d", rec.Code, http.StatusCreated)
 		}
 
 		var got User
 		if err := json.NewDecoder(rec.Body).Decode(&got); err != nil {
-			t.Fatalf("reponse JSON invalide : %v", err)
+			t.Fatalf("invalid JSON response: %v", err)
 		}
 		if got.ID != 42 {
-			t.Errorf("ID = %d, attendu 42", got.ID)
+			t.Errorf("ID = %d, want 42", got.ID)
 		}
 		if got.Pseudo != "Thierry" {
-			t.Errorf("Pseudo = %q, attendu Thierry", got.Pseudo)
+			t.Errorf("Pseudo = %q, want Thierry", got.Pseudo)
 		}
 		if got.CreditBalance != welcomeCredits {
-			t.Errorf("CreditBalance = %d, attendu %d", got.CreditBalance, welcomeCredits)
+			t.Errorf("CreditBalance = %d, want %d", got.CreditBalance, welcomeCredits)
 		}
 	})
 
-	t.Run("pseudo vide -> 400", func(t *testing.T) {
+	t.Run("empty pseudo -> 400", func(t *testing.T) {
 		app := &api{users: &fakeUserUseCase{
 			registerFunc: func(ctx context.Context, pseudo, bio, city string) (User, error) {
 				return User{}, ErrPseudoRequired
@@ -62,19 +62,19 @@ func TestHandleCreateUser(t *testing.T) {
 		app.handleCreateUser(rec, req)
 
 		if rec.Code != http.StatusBadRequest {
-			t.Fatalf("code = %d, attendu %d", rec.Code, http.StatusBadRequest)
+			t.Fatalf("status = %d, want %d", rec.Code, http.StatusBadRequest)
 		}
 	})
 
-	t.Run("JSON invalide -> 400", func(t *testing.T) {
+	t.Run("invalid JSON -> 400", func(t *testing.T) {
 		app := &api{users: &fakeUserUseCase{}}
-		req := httptest.NewRequest(http.MethodPost, "/api/users", strings.NewReader(`{pas du json`))
+		req := httptest.NewRequest(http.MethodPost, "/api/users", strings.NewReader(`{not json`))
 		rec := httptest.NewRecorder()
 
 		app.handleCreateUser(rec, req)
 
 		if rec.Code != http.StatusBadRequest {
-			t.Fatalf("code = %d, attendu %d", rec.Code, http.StatusBadRequest)
+			t.Fatalf("status = %d, want %d", rec.Code, http.StatusBadRequest)
 		}
 	})
 }

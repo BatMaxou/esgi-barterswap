@@ -5,11 +5,11 @@ import (
 	"strings"
 )
 
-var ErrSkillNameRequired = errors.New("le nom de la competence est obligatoire")
+var ErrSkillNameRequired = errors.New("skill name is required")
 
-var ErrSkillLevelInvalid = errors.New("niveau de competence invalide (debutant, intermediaire ou expert)")
+var ErrSkillLevelInvalid = errors.New("invalid skill level (débutant, intermédiaire or expert)")
 
-var ErrSkillNameInvalid = errors.New("nom de competence invalide (hors de la liste des categories)")
+var ErrSkillNameInvalid = errors.New("invalid skill name (not in the category list)")
 
 type Skill struct {
 	Name  string `json:"name"`

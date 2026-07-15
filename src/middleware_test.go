@@ -12,10 +12,10 @@ func TestRequireAuth(t *testing.T) {
 		return &api{users: &fakeUserUseCase{authenticateFunc: authenticate}}
 	}
 
-	t.Run("header X-User-ID absent -> 401", func(t *testing.T) {
+	t.Run("missing X-User-ID header -> 401", func(t *testing.T) {
 		called := false
 		app := newApp(func(ctx context.Context, id int) (User, error) {
-			t.Fatal("Authenticate ne doit pas etre appele sans header")
+			t.Fatal("Authenticate must not be called without a header")
 
 			return User{}, nil
 		})
@@ -26,17 +26,17 @@ func TestRequireAuth(t *testing.T) {
 		app.requireAuth(next)(rec, req)
 
 		if rec.Code != http.StatusUnauthorized {
-			t.Fatalf("code = %d, attendu %d", rec.Code, http.StatusUnauthorized)
+			t.Fatalf("status = %d, want %d", rec.Code, http.StatusUnauthorized)
 		}
 		if called {
-			t.Error("le handler suivant ne doit pas etre appele")
+			t.Error("the next handler must not be called")
 		}
 	})
 
-	t.Run("X-User-ID non entier -> 401", func(t *testing.T) {
+	t.Run("non-integer X-User-ID -> 401", func(t *testing.T) {
 		called := false
 		app := newApp(func(ctx context.Context, id int) (User, error) {
-			t.Fatal("Authenticate ne doit pas etre appele pour un id non entier")
+			t.Fatal("Authenticate must not be called for a non-integer id")
 
 			return User{}, nil
 		})
@@ -48,14 +48,14 @@ func TestRequireAuth(t *testing.T) {
 		app.requireAuth(next)(rec, req)
 
 		if rec.Code != http.StatusUnauthorized {
-			t.Fatalf("code = %d, attendu %d", rec.Code, http.StatusUnauthorized)
+			t.Fatalf("status = %d, want %d", rec.Code, http.StatusUnauthorized)
 		}
 		if called {
-			t.Error("le handler suivant ne doit pas etre appele")
+			t.Error("the next handler must not be called")
 		}
 	})
 
-	t.Run("utilisateur inconnu -> 401", func(t *testing.T) {
+	t.Run("unknown user -> 401", func(t *testing.T) {
 		called := false
 		app := newApp(func(ctx context.Context, id int) (User, error) {
 			return User{}, ErrUserNotFound
@@ -68,14 +68,14 @@ func TestRequireAuth(t *testing.T) {
 		app.requireAuth(next)(rec, req)
 
 		if rec.Code != http.StatusUnauthorized {
-			t.Fatalf("code = %d, attendu %d", rec.Code, http.StatusUnauthorized)
+			t.Fatalf("status = %d, want %d", rec.Code, http.StatusUnauthorized)
 		}
 		if called {
-			t.Error("le handler suivant ne doit pas etre appele")
+			t.Error("the next handler must not be called")
 		}
 	})
 
-	t.Run("utilisateur valide -> handler appele avec l'utilisateur courant", func(t *testing.T) {
+	t.Run("valid user -> handler called with the current user", func(t *testing.T) {
 		called := false
 		var seenUser User
 		app := newApp(func(ctx context.Context, id int) (User, error) {
@@ -84,7 +84,7 @@ func TestRequireAuth(t *testing.T) {
 		next := func(w http.ResponseWriter, r *http.Request) {
 			user, ok := currentUser(r.Context())
 			if !ok {
-				t.Fatal("utilisateur courant absent du context")
+				t.Fatal("current user missing from context")
 			}
 			called = true
 			seenUser = user
@@ -97,13 +97,13 @@ func TestRequireAuth(t *testing.T) {
 		app.requireAuth(next)(rec, req)
 
 		if rec.Code != http.StatusOK {
-			t.Fatalf("code = %d, attendu %d", rec.Code, http.StatusOK)
+			t.Fatalf("status = %d, want %d", rec.Code, http.StatusOK)
 		}
 		if !called {
-			t.Fatal("le handler suivant doit etre appele")
+			t.Fatal("the next handler must be called")
 		}
 		if seenUser.ID != 5 {
-			t.Errorf("utilisateur courant ID = %d, attendu 5", seenUser.ID)
+			t.Errorf("current user ID = %d, want 5", seenUser.ID)
 		}
 	})
 }

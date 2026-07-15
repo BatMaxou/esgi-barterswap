@@ -17,7 +17,7 @@ func (repository *SkillRepository) FindByUserID(ctx context.Context, exec dbExec
 		userID,
 	)
 	if err != nil {
-		return nil, fmt.Errorf("recuperation des competences : %w", err)
+		return nil, fmt.Errorf("fetch skills: %w", err)
 	}
 	defer rows.Close()
 
@@ -25,12 +25,12 @@ func (repository *SkillRepository) FindByUserID(ctx context.Context, exec dbExec
 	for rows.Next() {
 		var skill Skill
 		if err := rows.Scan(&skill.Name, &skill.Level); err != nil {
-			return nil, fmt.Errorf("lecture competence : %w", err)
+			return nil, fmt.Errorf("read skill: %w", err)
 		}
 		skills = append(skills, skill)
 	}
 	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("parcours des competences : %w", err)
+		return nil, fmt.Errorf("iterate skills: %w", err)
 	}
 
 	return skills, nil
@@ -41,7 +41,7 @@ func (repository *SkillRepository) ReplaceForUser(ctx context.Context, exec dbEx
 		`DELETE FROM skills WHERE user_id = ?`,
 		userID,
 	); err != nil {
-		return fmt.Errorf("suppression des competences : %w", err)
+		return fmt.Errorf("delete skills: %w", err)
 	}
 
 	for _, skill := range skills {
@@ -49,7 +49,7 @@ func (repository *SkillRepository) ReplaceForUser(ctx context.Context, exec dbEx
 			`INSERT INTO skills (user_id, name, level) VALUES (?, ?, ?)`,
 			userID, skill.Name, skill.Level,
 		); err != nil {
-			return fmt.Errorf("insertion competence : %w", err)
+			return fmt.Errorf("insert skill: %w", err)
 		}
 	}
 

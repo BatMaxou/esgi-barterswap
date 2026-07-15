@@ -1,0 +1,30 @@
+type: http_request
+model: http_request
+id: rq_fO1sVc2Wd7
+createdAt: 2026-07-15T00:00:00
+updatedAt: 2026-07-15T00:00:00
+workspaceId: wk_eEegibfaCL
+folderId: fl_Sv7RqKm3Np
+authentication: {}
+authenticationType: null
+body: {}
+bodyType: null
+description: List of ads (public; server-side filters category / city / search combined with AND)
+headers: []
+method: GET
+name: List Services
+sortPriority: 0.0
+url: ${[ BASE_URL ]}/api/services
+urlParameters:
+  - enabled: false
+    name: category
+    value: Informatique
+    id: qp_service_category
+  - enabled: false
+    name: city
+    value: Paris
+    id: qp_service_city
+  - enabled: false
+    name: search
+    value: Go
+    id: qp_service_search

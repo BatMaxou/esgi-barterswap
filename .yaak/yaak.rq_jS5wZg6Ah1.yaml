@@ -1,0 +1,22 @@
+type: http_request
+model: http_request
+id: rq_jS5wZg6Ah1
+createdAt: 2026-07-15T00:00:00
+updatedAt: 2026-07-15T00:00:00
+workspaceId: wk_eEegibfaCL
+folderId: fl_Sv7RqKm3Np
+authentication: {}
+authenticationType: null
+body: {}
+bodyType: null
+description: Delete your ad (auth via X-User-ID header; owner only; 204 on success)
+headers:
+  - enabled: true
+    name: X-User-ID
+    value: ${[ USER_ID ]}
+    id: hdr_userid_service_delete
+method: DELETE
+name: Delete Service
+sortPriority: 4000.0
+url: ${[ BASE_URL ]}/api/services/${[ SERVICE_ID ]}
+urlParameters: []

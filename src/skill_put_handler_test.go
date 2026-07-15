@@ -15,7 +15,7 @@ func TestHandleDefineUserSkills(t *testing.T) {
 		return req.WithContext(ctx)
 	}
 
-	t.Run("definition de ses competences -> 200", func(t *testing.T) {
+	t.Run("setting your own skills -> 200", func(t *testing.T) {
 		app := &api{skills: &fakeSkillUseCase{
 			defineSkillsFunc: func(ctx context.Context, actorID, targetID int, skills []Skill) ([]Skill, error) {
 				return skills, nil
@@ -31,18 +31,18 @@ func TestHandleDefineUserSkills(t *testing.T) {
 		app.handleDefineUserSkills(rec, req)
 
 		if rec.Code != http.StatusOK {
-			t.Fatalf("code = %d, attendu %d", rec.Code, http.StatusOK)
+			t.Fatalf("status = %d, want %d", rec.Code, http.StatusOK)
 		}
 		var got []Skill
 		if err := json.NewDecoder(rec.Body).Decode(&got); err != nil {
-			t.Fatalf("reponse JSON invalide : %v", err)
+			t.Fatalf("invalid JSON response: %v", err)
 		}
 		if len(got) != 1 || got[0].Level != "expert" {
-			t.Errorf("competences = %+v, attendu [expert]", got)
+			t.Errorf("skills = %+v, want [expert]", got)
 		}
 	})
 
-	t.Run("competences d'un autre utilisateur -> 403", func(t *testing.T) {
+	t.Run("another user's skills -> 403", func(t *testing.T) {
 		app := &api{skills: &fakeSkillUseCase{
 			defineSkillsFunc: func(ctx context.Context, actorID, targetID int, skills []Skill) ([]Skill, error) {
 				return nil, ErrForbidden
@@ -57,11 +57,11 @@ func TestHandleDefineUserSkills(t *testing.T) {
 		app.handleDefineUserSkills(rec, req)
 
 		if rec.Code != http.StatusForbidden {
-			t.Fatalf("code = %d, attendu %d", rec.Code, http.StatusForbidden)
+			t.Fatalf("status = %d, want %d", rec.Code, http.StatusForbidden)
 		}
 	})
 
-	t.Run("level invalide -> 400", func(t *testing.T) {
+	t.Run("invalid level -> 400", func(t *testing.T) {
 		app := &api{skills: &fakeSkillUseCase{
 			defineSkillsFunc: func(ctx context.Context, actorID, targetID int, skills []Skill) ([]Skill, error) {
 				return nil, ErrSkillLevelInvalid
@@ -76,11 +76,11 @@ func TestHandleDefineUserSkills(t *testing.T) {
 		app.handleDefineUserSkills(rec, req)
 
 		if rec.Code != http.StatusBadRequest {
-			t.Fatalf("code = %d, attendu %d", rec.Code, http.StatusBadRequest)
+			t.Fatalf("status = %d, want %d", rec.Code, http.StatusBadRequest)
 		}
 	})
 
-	t.Run("sans utilisateur authentifie -> 401", func(t *testing.T) {
+	t.Run("without authenticated user -> 401", func(t *testing.T) {
 		app := &api{skills: &fakeSkillUseCase{}}
 
 		req := httptest.NewRequest(http.MethodPut, "/api/users/5/skills", strings.NewReader(`[]`))
@@ -90,14 +90,14 @@ func TestHandleDefineUserSkills(t *testing.T) {
 		app.handleDefineUserSkills(rec, req)
 
 		if rec.Code != http.StatusUnauthorized {
-			t.Fatalf("code = %d, attendu %d", rec.Code, http.StatusUnauthorized)
+			t.Fatalf("status = %d, want %d", rec.Code, http.StatusUnauthorized)
 		}
 	})
 
-	t.Run("JSON invalide -> 400", func(t *testing.T) {
+	t.Run("invalid JSON -> 400", func(t *testing.T) {
 		app := &api{skills: &fakeSkillUseCase{}}
 
-		req := httptest.NewRequest(http.MethodPut, "/api/users/5/skills", strings.NewReader(`{pas du json`))
+		req := httptest.NewRequest(http.MethodPut, "/api/users/5/skills", strings.NewReader(`{not json`))
 		req.SetPathValue("id", "5")
 		req = withCurrentUser(req, User{ID: 5})
 		rec := httptest.NewRecorder()
@@ -105,7 +105,7 @@ func TestHandleDefineUserSkills(t *testing.T) {
 		app.handleDefineUserSkills(rec, req)
 
 		if rec.Code != http.StatusBadRequest {
-			t.Fatalf("code = %d, attendu %d", rec.Code, http.StatusBadRequest)
+			t.Fatalf("status = %d, want %d", rec.Code, http.StatusBadRequest)
 		}
 	})
 }

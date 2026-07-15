@@ -17,7 +17,7 @@ func NewUserRepository() *UserRepository {
 func (repository *UserRepository) Create(ctx context.Context, exec dbExecutor, user User) (User, error) {
 	createdAt, err := time.Parse(time.RFC3339, user.CreatedAt)
 	if err != nil {
-		return User{}, fmt.Errorf("date de creation invalide : %w", err)
+		return User{}, fmt.Errorf("invalid creation date: %w", err)
 	}
 
 	insertResult, err := exec.ExecContext(ctx,
@@ -25,12 +25,12 @@ func (repository *UserRepository) Create(ctx context.Context, exec dbExecutor, u
 		user.Pseudo, user.Bio, user.City, createdAt,
 	)
 	if err != nil {
-		return User{}, fmt.Errorf("insertion utilisateur : %w", err)
+		return User{}, fmt.Errorf("insert user: %w", err)
 	}
 
 	insertedID, err := insertResult.LastInsertId()
 	if err != nil {
-		return User{}, fmt.Errorf("recuperation de l'id : %w", err)
+		return User{}, fmt.Errorf("fetch inserted id: %w", err)
 	}
 	user.ID = int(insertedID)
 
@@ -44,7 +44,7 @@ func (repository *UserRepository) Update(ctx context.Context, exec dbExecutor, u
 	)
 
 	if err != nil {
-		return User{}, fmt.Errorf("mise a jour utilisateur : %w", err)
+		return User{}, fmt.Errorf("update user: %w", err)
 	}
 
 	return user, nil
@@ -62,7 +62,7 @@ func (repository *UserRepository) FindByID(ctx context.Context, exec dbExecutor,
 		return User{}, ErrUserNotFound
 	}
 	if err != nil {
-		return User{}, fmt.Errorf("recuperation utilisateur : %w", err)
+		return User{}, fmt.Errorf("fetch user: %w", err)
 	}
 
 	user.Skills = []Skill{}

@@ -6,11 +6,11 @@ import (
 	"time"
 )
 
-var ErrPseudoRequired = errors.New("le pseudo est obligatoire")
+var ErrPseudoRequired = errors.New("pseudo is required")
 
-var ErrUserNotFound = errors.New("utilisateur introuvable")
+var ErrUserNotFound = errors.New("user not found")
 
-var ErrForbidden = errors.New("action non autorisee")
+var ErrForbidden = errors.New("action not allowed")
 
 type User struct {
 	ID            int     `json:"id"`

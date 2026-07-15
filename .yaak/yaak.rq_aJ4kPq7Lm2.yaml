@@ -15,7 +15,7 @@ body:
       "city": "Paris"
     }
 bodyType: application/json
-description: Cree un compte utilisateur (10 credits de bienvenue attribues automatiquement)
+description: Create a user account (10 welcome credits granted automatically)
 headers: []
 method: POST
 name: Create User
