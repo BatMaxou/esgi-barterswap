@@ -82,6 +82,21 @@ func migrate(ctx context.Context, db *sql.DB) error {
 			CONSTRAINT fk_exchange_owner     FOREIGN KEY (owner_id)     REFERENCES users(id)
 		)`,
 		`CREATE INDEX IF NOT EXISTS idx_exchanges_service_status ON exchanges (service_id, status)`,
+		`CREATE TABLE IF NOT EXISTS reviews (
+			id          INT AUTO_INCREMENT PRIMARY KEY,
+			exchange_id INT NOT NULL,
+			author_id   INT NOT NULL,
+			target_id   INT NOT NULL,
+			rating      INT NOT NULL,
+			comment     TEXT,
+			created_at  DATETIME NOT NULL,
+			CONSTRAINT fk_review_exchange FOREIGN KEY (exchange_id) REFERENCES exchanges(id),
+			CONSTRAINT fk_review_author   FOREIGN KEY (author_id)   REFERENCES users(id),
+			CONSTRAINT fk_review_target   FOREIGN KEY (target_id)   REFERENCES users(id),
+			CONSTRAINT uq_review_exchange_author UNIQUE (exchange_id, author_id)
+		)`,
+		`CREATE INDEX IF NOT EXISTS idx_reviews_target_id ON reviews (target_id)`,
+		`CREATE INDEX IF NOT EXISTS idx_reviews_exchange_id ON reviews (exchange_id)`,
 	}
 
 	for _, statement := range statements {

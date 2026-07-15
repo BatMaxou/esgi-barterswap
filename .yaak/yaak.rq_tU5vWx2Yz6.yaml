@@ -1,0 +1,27 @@
+type: http_request
+model: http_request
+id: rq_tU5vWx2Yz6
+createdAt: 2026-07-15T00:00:00
+updatedAt: 2026-07-15T00:00:00
+workspaceId: wk_eEegibfaCL
+folderId: fl_U5vLq9Np3y
+authentication: {}
+authenticationType: null
+body:
+  text: |-
+    {
+      "rating": 5,
+      "comment": "Excellent session"
+    }
+bodyType: application/json
+description: Submit a review on a completed exchange (auth via X-User-ID header; one review per participant; rating 1-5)
+headers:
+  - enabled: true
+    name: X-User-ID
+    value: ${[ USER_ID ]}
+    id: hdr_userid_review_create
+method: POST
+name: Create Review
+sortPriority: 0.0
+url: ${[ BASE_URL ]}/api/exchanges/${[ EXCHANGE_ID ]}/review
+urlParameters: []

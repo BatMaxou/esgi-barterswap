@@ -150,6 +150,32 @@ func (repository *ExchangeRepository) List(ctx context.Context, exec dbExecutor,
 	return exchanges, nil
 }
 
+func (repository *ExchangeRepository) ListByServiceID(ctx context.Context, exec dbExecutor, serviceID int) ([]Exchange, error) {
+	rows, err := exec.QueryContext(ctx,
+		`SELECT id, service_id, requester_id, owner_id, status, created_at, updated_at
+		 FROM exchanges WHERE service_id = ? ORDER BY created_at DESC, id DESC`,
+		serviceID,
+	)
+	if err != nil {
+		return nil, fmt.Errorf("fetch exchanges for service: %w", err)
+	}
+	defer rows.Close()
+
+	exchanges := []Exchange{}
+	for rows.Next() {
+		exchange, err := scanExchange(rows)
+		if err != nil {
+			return nil, fmt.Errorf("read exchange: %w", err)
+		}
+		exchanges = append(exchanges, exchange)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("iterate exchanges for service: %w", err)
+	}
+
+	return exchanges, nil
+}
+
 func scanExchange(row scanner) (Exchange, error) {
 	var exchange Exchange
 	var createdAt time.Time

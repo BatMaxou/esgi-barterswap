@@ -11,6 +11,7 @@ type exchangeRepository interface {
 	UpdateStatus(ctx context.Context, exec dbExecutor, id int, status, updatedAt string) (Exchange, error)
 	HasActiveForService(ctx context.Context, exec dbExecutor, serviceID int) (bool, error)
 	List(ctx context.Context, exec dbExecutor, filter ExchangeFilter) ([]Exchange, error)
+	ListByServiceID(ctx context.Context, exec dbExecutor, serviceID int) ([]Exchange, error)
 }
 
 type ExchangeUseCase struct {
