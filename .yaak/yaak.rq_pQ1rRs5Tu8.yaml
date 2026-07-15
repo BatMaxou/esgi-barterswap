@@ -1,0 +1,22 @@
+type: http_request
+model: http_request
+id: rq_pQ1rRs5Tu8
+createdAt: 2026-07-15T00:00:00
+updatedAt: 2026-07-15T00:00:00
+workspaceId: wk_eEegibfaCL
+folderId: fl_T4wKp8Mn2x
+authentication: {}
+authenticationType: null
+body: {}
+bodyType: null
+description: Accept a pending exchange (auth via X-User-ID header; owner only; blocks requester credits with spend transaction)
+headers:
+  - enabled: true
+    name: X-User-ID
+    value: ${[ USER_ID ]}
+    id: hdr_userid_exchange_accept
+method: PUT
+name: Accept Exchange
+sortPriority: 3000.0
+url: ${[ BASE_URL ]}/api/exchanges/${[ EXCHANGE_ID ]}/accept
+urlParameters: []

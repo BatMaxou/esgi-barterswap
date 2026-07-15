@@ -25,10 +25,21 @@ type serviceUseCase interface {
 	Delete(ctx context.Context, actorID, serviceID int) error
 }
 
+type exchangeUseCase interface {
+	Create(ctx context.Context, requesterID, serviceID int) (Exchange, error)
+	List(ctx context.Context, actorID int, status string) ([]Exchange, error)
+	Get(ctx context.Context, actorID, exchangeID int) (Exchange, error)
+	Accept(ctx context.Context, actorID, exchangeID int) (Exchange, error)
+	Reject(ctx context.Context, actorID, exchangeID int) (Exchange, error)
+	Complete(ctx context.Context, actorID, exchangeID int) (Exchange, error)
+	Cancel(ctx context.Context, actorID, exchangeID int) (Exchange, error)
+}
+
 type api struct {
-	users    userUseCase
-	skills   skillUseCase
-	services serviceUseCase
+	users     userUseCase
+	skills    skillUseCase
+	services  serviceUseCase
+	exchanges exchangeUseCase
 }
 
 func (a *api) registerRoutes(mux *http.ServeMux) {
@@ -45,4 +56,12 @@ func (a *api) registerRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("GET /api/services/{id}", a.handleGetService)
 	mux.HandleFunc("PUT /api/services/{id}", a.requireAuth(a.handleUpdateService))
 	mux.HandleFunc("DELETE /api/services/{id}", a.requireAuth(a.handleDeleteService))
+
+	mux.HandleFunc("POST /api/exchanges", a.requireAuth(a.handleCreateExchange))
+	mux.HandleFunc("GET /api/exchanges", a.requireAuth(a.handleListExchanges))
+	mux.HandleFunc("GET /api/exchanges/{id}", a.requireAuth(a.handleGetExchange))
+	mux.HandleFunc("PUT /api/exchanges/{id}/accept", a.requireAuth(a.handleAcceptExchange))
+	mux.HandleFunc("PUT /api/exchanges/{id}/reject", a.requireAuth(a.handleRejectExchange))
+	mux.HandleFunc("PUT /api/exchanges/{id}/complete", a.requireAuth(a.handleCompleteExchange))
+	mux.HandleFunc("PUT /api/exchanges/{id}/cancel", a.requireAuth(a.handleCancelExchange))
 }

@@ -1,0 +1,22 @@
+type: http_request
+model: http_request
+id: rq_nO0pQr4St7
+createdAt: 2026-07-15T00:00:00
+updatedAt: 2026-07-15T00:00:00
+workspaceId: wk_eEegibfaCL
+folderId: fl_T4wKp8Mn2x
+authentication: {}
+authenticationType: null
+body: {}
+bodyType: null
+description: Exchange details (auth via X-User-ID header; requester or owner only; 404 if not found)
+headers:
+  - enabled: true
+    name: X-User-ID
+    value: ${[ USER_ID ]}
+    id: hdr_userid_exchange_get
+method: GET
+name: Get Exchange
+sortPriority: 2000.0
+url: ${[ BASE_URL ]}/api/exchanges/${[ EXCHANGE_ID ]}
+urlParameters: []

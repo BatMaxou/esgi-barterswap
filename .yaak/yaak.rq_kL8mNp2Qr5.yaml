@@ -1,0 +1,26 @@
+type: http_request
+model: http_request
+id: rq_kL8mNp2Qr5
+createdAt: 2026-07-15T00:00:00
+updatedAt: 2026-07-15T00:00:00
+workspaceId: wk_eEegibfaCL
+folderId: fl_T4wKp8Mn2x
+authentication: {}
+authenticationType: null
+body:
+  text: |-
+    {
+      "service_id": ${[ SERVICE_ID ]}
+    }
+bodyType: application/json
+description: Create an exchange request (auth via X-User-ID header; authenticated user becomes requester; 201 pending; 400 self-request or insufficient credits; 409 if service already has pending/accepted exchange)
+headers:
+  - enabled: true
+    name: X-User-ID
+    value: ${[ USER_ID ]}
+    id: hdr_userid_exchange_create
+method: POST
+name: Create Exchange
+sortPriority: 0.0
+url: ${[ BASE_URL ]}/api/exchanges
+urlParameters: []

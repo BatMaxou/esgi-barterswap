@@ -1,0 +1,22 @@
+type: http_request
+model: http_request
+id: rq_sT4uUv8Wx1
+createdAt: 2026-07-15T00:00:00
+updatedAt: 2026-07-15T00:00:00
+workspaceId: wk_eEegibfaCL
+folderId: fl_T4wKp8Mn2x
+authentication: {}
+authenticationType: null
+body: {}
+bodyType: null
+description: Cancel an exchange (auth via X-User-ID header; requester or owner; pending or accepted; refunds requester if previously accepted)
+headers:
+  - enabled: true
+    name: X-User-ID
+    value: ${[ USER_ID ]}
+    id: hdr_userid_exchange_cancel
+method: PUT
+name: Cancel Exchange
+sortPriority: 6000.0
+url: ${[ BASE_URL ]}/api/exchanges/${[ EXCHANGE_ID ]}/cancel
+urlParameters: []
