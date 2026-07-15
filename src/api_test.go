@@ -79,3 +79,58 @@ func TestUpdateUserRouting(t *testing.T) {
 		}
 	})
 }
+
+func TestExchangeRouting(t *testing.T) {
+	app := &api{
+		users: &fakeUserUseCase{
+			authenticateFunc: func(ctx context.Context, id int) (User, error) {
+				return User{ID: id}, nil
+			},
+		},
+		exchanges: &fakeExchangeUseCase{
+			createFunc: func(ctx context.Context, requesterID, serviceID int) (Exchange, error) {
+				return Exchange{ID: 1, ServiceID: serviceID, RequesterID: requesterID, Status: ExchangeStatusPending}, nil
+			},
+			listFunc: func(ctx context.Context, actorID int, status string) ([]Exchange, error) {
+				return []Exchange{}, nil
+			},
+		},
+	}
+	mux := http.NewServeMux()
+	app.registerRoutes(mux)
+
+	t.Run("POST /api/exchanges without auth -> 401", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodPost, "/api/exchanges", strings.NewReader(`{"service_id":1}`))
+		rec := httptest.NewRecorder()
+
+		mux.ServeHTTP(rec, req)
+
+		if rec.Code != http.StatusUnauthorized {
+			t.Fatalf("status = %d, want 401", rec.Code)
+		}
+	})
+
+	t.Run("POST /api/exchanges with auth -> 201", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodPost, "/api/exchanges", strings.NewReader(`{"service_id":1}`))
+		req.Header.Set("X-User-ID", "2")
+		rec := httptest.NewRecorder()
+
+		mux.ServeHTTP(rec, req)
+
+		if rec.Code != http.StatusCreated {
+			t.Fatalf("status = %d, want 201", rec.Code)
+		}
+	})
+
+	t.Run("GET /api/exchanges with auth -> 200", func(t *testing.T) {
+		req := httptest.NewRequest(http.MethodGet, "/api/exchanges", nil)
+		req.Header.Set("X-User-ID", "2")
+		rec := httptest.NewRecorder()
+
+		mux.ServeHTTP(rec, req)
+
+		if rec.Code != http.StatusOK {
+			t.Fatalf("status = %d, want 200", rec.Code)
+		}
+	})
+}

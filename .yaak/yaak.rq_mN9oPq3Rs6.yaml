@@ -1,0 +1,26 @@
+type: http_request
+model: http_request
+id: rq_mN9oPq3Rs6
+createdAt: 2026-07-15T00:00:00
+updatedAt: 2026-07-15T00:00:00
+workspaceId: wk_eEegibfaCL
+folderId: fl_T4wKp8Mn2x
+authentication: {}
+authenticationType: null
+body: {}
+bodyType: null
+description: List your exchanges (auth via X-User-ID header; sent + received; optional server-side status filter)
+headers:
+  - enabled: true
+    name: X-User-ID
+    value: ${[ USER_ID ]}
+    id: hdr_userid_exchange_list
+method: GET
+name: List Exchanges
+sortPriority: 1000.0
+url: ${[ BASE_URL ]}/api/exchanges
+urlParameters:
+  - enabled: false
+    name: status
+    value: pending
+    id: qp_exchange_status

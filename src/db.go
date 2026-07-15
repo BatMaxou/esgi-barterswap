@@ -69,12 +69,57 @@ func migrate(ctx context.Context, db *sql.DB) error {
 			created_at       DATETIME NOT NULL,
 			CONSTRAINT fk_service_provider FOREIGN KEY (provider_id) REFERENCES users(id)
 		)`,
+		`CREATE TABLE IF NOT EXISTS exchanges (
+			id           INT AUTO_INCREMENT PRIMARY KEY,
+			service_id   INT NOT NULL,
+			requester_id INT NOT NULL,
+			owner_id     INT NOT NULL,
+			status       VARCHAR(32) NOT NULL,
+			created_at   DATETIME NOT NULL,
+			updated_at   DATETIME NOT NULL,
+			CONSTRAINT fk_exchange_service   FOREIGN KEY (service_id)   REFERENCES services(id),
+			CONSTRAINT fk_exchange_requester FOREIGN KEY (requester_id) REFERENCES users(id),
+			CONSTRAINT fk_exchange_owner     FOREIGN KEY (owner_id)     REFERENCES users(id)
+		)`,
+		`CREATE INDEX IF NOT EXISTS idx_exchanges_service_status ON exchanges (service_id, status)`,
 	}
 
 	for _, statement := range statements {
 		if _, err := db.ExecContext(ctx, statement); err != nil {
 			return fmt.Errorf("migration: %w", err)
 		}
+	}
+
+	if err := ensureForeignKey(ctx, db, "credit_transactions", "fk_credit_exchange",
+		`ALTER TABLE credit_transactions
+		 ADD CONSTRAINT fk_credit_exchange FOREIGN KEY (exchange_id) REFERENCES exchanges(id)`,
+	); err != nil {
+		return fmt.Errorf("migration: %w", err)
+	}
+
+	return nil
+}
+
+func ensureForeignKey(ctx context.Context, db *sql.DB, table, name, statement string) error {
+	var count int
+
+	err := db.QueryRowContext(ctx,
+		`SELECT COUNT(*) FROM information_schema.TABLE_CONSTRAINTS
+		 WHERE CONSTRAINT_SCHEMA = DATABASE()
+		   AND TABLE_NAME = ?
+		   AND CONSTRAINT_NAME = ?
+		   AND CONSTRAINT_TYPE = 'FOREIGN KEY'`,
+		table, name,
+	).Scan(&count)
+	if err != nil {
+		return fmt.Errorf("check foreign key %s: %w", name, err)
+	}
+	if count > 0 {
+		return nil
+	}
+
+	if _, err := db.ExecContext(ctx, statement); err != nil {
+		return fmt.Errorf("add foreign key %s: %w", name, err)
 	}
 
 	return nil
