@@ -12,10 +12,10 @@ import (
 func openDB(dsn string) (*sql.DB, error) {
 	db, err := sql.Open("mysql", dsn)
 	if err != nil {
-		return nil, fmt.Errorf("ouverture base : %w", err)
+		return nil, fmt.Errorf("open database: %w", err)
 	}
 
-	// La base peut ne pas etre prete immediatement, reessaie jusqu'a 30s
+	// The database may not be ready immediately, retry for up to 30s.
 	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 	defer cancel()
 
@@ -25,7 +25,7 @@ func openDB(dsn string) (*sql.DB, error) {
 			return db, nil
 		}
 		if ctx.Err() != nil {
-			return nil, fmt.Errorf("connexion base : %w", pingErr)
+			return nil, fmt.Errorf("connect to database: %w", pingErr)
 		}
 		time.Sleep(time.Second)
 	}
@@ -56,11 +56,24 @@ func migrate(ctx context.Context, db *sql.DB) error {
 			created_at  DATETIME NOT NULL,
 			CONSTRAINT fk_credit_user FOREIGN KEY (user_id) REFERENCES users(id)
 		)`,
+		`CREATE TABLE IF NOT EXISTS services (
+			id               INT AUTO_INCREMENT PRIMARY KEY,
+			provider_id      INT NOT NULL,
+			title            VARCHAR(255) NOT NULL,
+			description      TEXT,
+			category         VARCHAR(64) NOT NULL,
+			duration_minutes INT NOT NULL,
+			credits          INT NOT NULL,
+			city             VARCHAR(255),
+			active           BOOLEAN NOT NULL DEFAULT TRUE,
+			created_at       DATETIME NOT NULL,
+			CONSTRAINT fk_service_provider FOREIGN KEY (provider_id) REFERENCES users(id)
+		)`,
 	}
 
 	for _, statement := range statements {
 		if _, err := db.ExecContext(ctx, statement); err != nil {
-			return fmt.Errorf("migration : %w", err)
+			return fmt.Errorf("migration: %w", err)
 		}
 	}
 

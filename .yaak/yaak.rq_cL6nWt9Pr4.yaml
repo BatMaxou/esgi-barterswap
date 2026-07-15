@@ -15,7 +15,7 @@ body:
       "city": "Lyon"
     }
 bodyType: application/json
-description: Modifier son profil (auth via header X-User-ID ; seul le proprietaire peut se modifier)
+description: Update your profile (auth via X-User-ID header; only the owner can update it)
 headers:
   - enabled: true
     name: X-User-ID

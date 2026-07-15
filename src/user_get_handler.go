@@ -9,7 +9,7 @@ import (
 func (a *api) handleGetUser(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil {
-		writeError(w, http.StatusBadRequest, "identifiant invalide")
+		writeError(w, http.StatusBadRequest, "invalid identifier")
 
 		return
 	}
@@ -21,7 +21,7 @@ func (a *api) handleGetUser(w http.ResponseWriter, r *http.Request) {
 
 			return
 		}
-		writeError(w, http.StatusInternalServerError, "impossible de recuperer l'utilisateur")
+		writeError(w, http.StatusInternalServerError, "could not fetch user")
 
 		return
 	}

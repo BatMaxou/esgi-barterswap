@@ -9,7 +9,7 @@ authentication: {}
 authenticationType: null
 body: {}
 bodyType: null
-description: Competences d'un utilisateur (public)
+description: Skills of a user (public)
 headers: []
 method: GET
 name: Get User Skills

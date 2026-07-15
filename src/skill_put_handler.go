@@ -10,21 +10,21 @@ import (
 func (a *api) handleDefineUserSkills(w http.ResponseWriter, r *http.Request) {
 	targetID, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil {
-		writeError(w, http.StatusBadRequest, "identifiant invalide")
+		writeError(w, http.StatusBadRequest, "invalid identifier")
 
 		return
 	}
 
 	actor, ok := currentUser(r.Context())
 	if !ok {
-		writeError(w, http.StatusUnauthorized, "authentification requise")
+		writeError(w, http.StatusUnauthorized, "authentication required")
 
 		return
 	}
 
 	var requestBody []Skill
 	if err := json.NewDecoder(r.Body).Decode(&requestBody); err != nil {
-		writeError(w, http.StatusBadRequest, "corps de requete JSON invalide")
+		writeError(w, http.StatusBadRequest, "invalid JSON request body")
 
 		return
 	}
@@ -37,7 +37,7 @@ func (a *api) handleDefineUserSkills(w http.ResponseWriter, r *http.Request) {
 		case errors.Is(err, ErrSkillNameRequired), errors.Is(err, ErrSkillNameInvalid), errors.Is(err, ErrSkillLevelInvalid):
 			writeError(w, http.StatusBadRequest, err.Error())
 		default:
-			writeError(w, http.StatusInternalServerError, "impossible de definir les competences")
+			writeError(w, http.StatusInternalServerError, "could not set skills")
 		}
 
 		return

@@ -9,7 +9,7 @@ authentication: {}
 authenticationType: null
 body: {}
 bodyType: null
-description: Profil public d'un utilisateur (solde calcule depuis le journal)
+description: Public profile of a user (balance computed from the ledger)
 headers: []
 method: GET
 name: Get User Profile

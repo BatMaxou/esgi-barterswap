@@ -1,0 +1,31 @@
+type: http_request
+model: http_request
+id: rq_gP2tWd3Xe8
+createdAt: 2026-07-15T00:00:00
+updatedAt: 2026-07-15T00:00:00
+workspaceId: wk_eEegibfaCL
+folderId: fl_Sv7RqKm3Np
+authentication: {}
+authenticationType: null
+body:
+  text: |-
+    {
+      "title": "Cours de Go",
+      "description": "Initiation en 1h",
+      "category": "Informatique",
+      "duration_minutes": 60,
+      "credits": 2,
+      "city": "Paris"
+    }
+bodyType: application/json
+description: Publish an ad (auth via X-User-ID header; provider_id = authenticated user; category within the subject's closed list)
+headers:
+  - enabled: true
+    name: X-User-ID
+    value: ${[ USER_ID ]}
+    id: hdr_userid_service_create
+method: POST
+name: Create Service
+sortPriority: 1000.0
+url: ${[ BASE_URL ]}/api/services
+urlParameters: []

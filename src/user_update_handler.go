@@ -16,21 +16,21 @@ type updateUserRequest struct {
 func (a *api) handleUpdateUser(w http.ResponseWriter, r *http.Request) {
 	targetID, err := strconv.Atoi(r.PathValue("id"))
 	if err != nil {
-		writeError(w, http.StatusBadRequest, "identifiant invalide")
+		writeError(w, http.StatusBadRequest, "invalid identifier")
 
 		return
 	}
 
 	actor, ok := currentUser(r.Context())
 	if !ok {
-		writeError(w, http.StatusUnauthorized, "authentification requise")
+		writeError(w, http.StatusUnauthorized, "authentication required")
 
 		return
 	}
 
 	var requestBody updateUserRequest
 	if err := json.NewDecoder(r.Body).Decode(&requestBody); err != nil {
-		writeError(w, http.StatusBadRequest, "corps de requete JSON invalide")
+		writeError(w, http.StatusBadRequest, "invalid JSON request body")
 
 		return
 	}
@@ -45,7 +45,7 @@ func (a *api) handleUpdateUser(w http.ResponseWriter, r *http.Request) {
 		case errors.Is(err, ErrUserNotFound):
 			writeError(w, http.StatusNotFound, err.Error())
 		default:
-			writeError(w, http.StatusInternalServerError, "impossible de modifier le profil")
+			writeError(w, http.StatusInternalServerError, "could not update profile")
 		}
 
 		return

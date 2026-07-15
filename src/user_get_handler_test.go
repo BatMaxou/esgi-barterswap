@@ -9,7 +9,7 @@ import (
 )
 
 func TestHandleGetUser(t *testing.T) {
-	t.Run("utilisateur existant -> 200", func(t *testing.T) {
+	t.Run("existing user -> 200", func(t *testing.T) {
 		app := &api{users: &fakeUserUseCase{
 			getProfileFunc: func(ctx context.Context, id int) (User, error) {
 				return User{
@@ -29,22 +29,22 @@ func TestHandleGetUser(t *testing.T) {
 		app.handleGetUser(rec, req)
 
 		if rec.Code != http.StatusOK {
-			t.Fatalf("code = %d, attendu %d", rec.Code, http.StatusOK)
+			t.Fatalf("status = %d, want %d", rec.Code, http.StatusOK)
 		}
 
 		var got User
 		if err := json.NewDecoder(rec.Body).Decode(&got); err != nil {
-			t.Fatalf("reponse JSON invalide : %v", err)
+			t.Fatalf("invalid JSON response: %v", err)
 		}
 		if got.ID != 5 {
-			t.Errorf("ID = %d, attendu 5", got.ID)
+			t.Errorf("ID = %d, want 5", got.ID)
 		}
 		if got.CreditBalance != 35 {
-			t.Errorf("CreditBalance = %d, attendu 35", got.CreditBalance)
+			t.Errorf("CreditBalance = %d, want 35", got.CreditBalance)
 		}
 	})
 
-	t.Run("utilisateur introuvable -> 404", func(t *testing.T) {
+	t.Run("user not found -> 404", func(t *testing.T) {
 		app := &api{users: &fakeUserUseCase{
 			getProfileFunc: func(ctx context.Context, id int) (User, error) {
 				return User{}, ErrUserNotFound
@@ -58,11 +58,11 @@ func TestHandleGetUser(t *testing.T) {
 		app.handleGetUser(rec, req)
 
 		if rec.Code != http.StatusNotFound {
-			t.Fatalf("code = %d, attendu %d", rec.Code, http.StatusNotFound)
+			t.Fatalf("status = %d, want %d", rec.Code, http.StatusNotFound)
 		}
 	})
 
-	t.Run("identifiant invalide -> 400", func(t *testing.T) {
+	t.Run("invalid identifier -> 400", func(t *testing.T) {
 		app := &api{users: &fakeUserUseCase{}}
 
 		req := httptest.NewRequest(http.MethodGet, "/api/users/abc", nil)
@@ -72,7 +72,7 @@ func TestHandleGetUser(t *testing.T) {
 		app.handleGetUser(rec, req)
 
 		if rec.Code != http.StatusBadRequest {
-			t.Fatalf("code = %d, attendu %d", rec.Code, http.StatusBadRequest)
+			t.Fatalf("status = %d, want %d", rec.Code, http.StatusBadRequest)
 		}
 	})
 }

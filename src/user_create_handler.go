@@ -15,7 +15,7 @@ type createUserRequest struct {
 func (a *api) handleCreateUser(w http.ResponseWriter, r *http.Request) {
 	var requestBody createUserRequest
 	if err := json.NewDecoder(r.Body).Decode(&requestBody); err != nil {
-		writeError(w, http.StatusBadRequest, "corps de requete JSON invalide")
+		writeError(w, http.StatusBadRequest, "invalid JSON request body")
 
 		return
 	}
@@ -27,7 +27,7 @@ func (a *api) handleCreateUser(w http.ResponseWriter, r *http.Request) {
 
 			return
 		}
-		writeError(w, http.StatusInternalServerError, "impossible de creer l'utilisateur")
+		writeError(w, http.StatusInternalServerError, "could not create user")
 
 		return
 	}

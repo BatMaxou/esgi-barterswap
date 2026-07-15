@@ -14,7 +14,7 @@ body:
       { "name": "Cuisine", "level": "intermédiaire" }
     ]
 bodyType: application/json
-description: Definir ses competences (auth via header X-User-ID ; ecrase les competences existantes ; champs name et level dans les enums du Sujet)
+description: Set your skills (auth via X-User-ID header; overwrites existing skills; name and level within the subject's enums)
 headers:
   - enabled: true
     name: X-User-ID

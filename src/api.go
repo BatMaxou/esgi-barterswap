@@ -17,9 +17,18 @@ type skillUseCase interface {
 	DefineSkills(ctx context.Context, actorID, targetID int, skills []Skill) ([]Skill, error)
 }
 
+type serviceUseCase interface {
+	Create(ctx context.Context, providerID int, title, description, category, city string, durationMinutes, credits int) (Service, error)
+	Get(ctx context.Context, id int) (Service, error)
+	List(ctx context.Context, filter ServiceFilter) ([]Service, error)
+	Update(ctx context.Context, actorID, serviceID int, title, description, category, city string, durationMinutes, credits int, active *bool) (Service, error)
+	Delete(ctx context.Context, actorID, serviceID int) error
+}
+
 type api struct {
-	users  userUseCase
-	skills skillUseCase
+	users    userUseCase
+	skills   skillUseCase
+	services serviceUseCase
 }
 
 func (a *api) registerRoutes(mux *http.ServeMux) {
@@ -30,4 +39,10 @@ func (a *api) registerRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("PUT /api/users/{id}", a.requireAuth(a.handleUpdateUser))
 	mux.HandleFunc("GET /api/users/{id}/skills", a.handleGetUserSkills)
 	mux.HandleFunc("PUT /api/users/{id}/skills", a.requireAuth(a.handleDefineUserSkills))
+
+	mux.HandleFunc("GET /api/services", a.handleListServices)
+	mux.HandleFunc("POST /api/services", a.requireAuth(a.handleCreateService))
+	mux.HandleFunc("GET /api/services/{id}", a.handleGetService)
+	mux.HandleFunc("PUT /api/services/{id}", a.requireAuth(a.handleUpdateService))
+	mux.HandleFunc("DELETE /api/services/{id}", a.requireAuth(a.handleDeleteService))
 }

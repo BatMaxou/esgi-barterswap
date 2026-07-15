@@ -12,7 +12,7 @@ func main() {
 
 	db, err := openDB(getEnv("DB_DSN", ""))
 	if err != nil {
-		log.Fatalf("base de donnees : %v", err)
+		log.Fatalf("database: %v", err)
 	}
 	defer db.Close()
 
@@ -20,25 +20,28 @@ func main() {
 	defer cancel()
 
 	if err := migrate(ctx, db); err != nil {
-		log.Fatalf("migration : %v", err)
+		log.Fatalf("migration: %v", err)
 	}
 
 	transactor := NewTransactor(db)
 	userRepository := NewUserRepository()
 	creditTransactionRepository := NewCreditTransactionRepository()
 	skillRepository := NewSkillRepository()
+	serviceRepository := NewServiceRepository()
 	userUseCase := NewUserUseCase(transactor, userRepository, creditTransactionRepository)
 	skillUseCase := NewSkillUseCase(transactor, userRepository, skillRepository)
+	serviceUseCase := NewServiceUseCase(transactor, serviceRepository)
 	app := &api{
-		users:  userUseCase,
-		skills: skillUseCase,
+		users:    userUseCase,
+		skills:   skillUseCase,
+		services: serviceUseCase,
 	}
 
 	mux := http.NewServeMux()
 	app.registerRoutes(mux)
 
-	log.Printf("BarterSwap demarre sur %s", addr)
+	log.Printf("BarterSwap starting on %s", addr)
 	if err := http.ListenAndServe(addr, mux); err != nil {
-		log.Fatalf("serveur arrete : %v", err)
+		log.Fatalf("server stopped: %v", err)
 	}
 }

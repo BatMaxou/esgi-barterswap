@@ -56,18 +56,18 @@ func TestUpdateUserRouting(t *testing.T) {
 	mux := http.NewServeMux()
 	app.registerRoutes(mux)
 
-	t.Run("sans header X-User-ID -> 401", func(t *testing.T) {
+	t.Run("without X-User-ID header -> 401", func(t *testing.T) {
 		req := httptest.NewRequest(http.MethodPut, "/api/users/5", strings.NewReader(`{"pseudo":"Thierry"}`))
 		rec := httptest.NewRecorder()
 
 		mux.ServeHTTP(rec, req)
 
 		if rec.Code != http.StatusUnauthorized {
-			t.Fatalf("code = %d, attendu %d", rec.Code, http.StatusUnauthorized)
+			t.Fatalf("status = %d, want %d", rec.Code, http.StatusUnauthorized)
 		}
 	})
 
-	t.Run("avec header X-User-ID valide -> 200", func(t *testing.T) {
+	t.Run("with valid X-User-ID header -> 200", func(t *testing.T) {
 		req := httptest.NewRequest(http.MethodPut, "/api/users/5", strings.NewReader(`{"pseudo":"Thierry"}`))
 		req.Header.Set("X-User-ID", "5")
 		rec := httptest.NewRecorder()
@@ -75,7 +75,7 @@ func TestUpdateUserRouting(t *testing.T) {
 		mux.ServeHTTP(rec, req)
 
 		if rec.Code != http.StatusOK {
-			t.Fatalf("code = %d, attendu %d", rec.Code, http.StatusOK)
+			t.Fatalf("status = %d, want %d", rec.Code, http.StatusOK)
 		}
 	})
 }
