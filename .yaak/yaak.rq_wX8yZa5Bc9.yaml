@@ -1,0 +1,18 @@
+type: http_request
+model: http_request
+id: rq_wX8yZa5Bc9
+createdAt: 2026-07-16T00:00:00
+updatedAt: 2026-07-16T00:00:00
+workspaceId: wk_eEegibfaCL
+folderId: fl_A9xMn2Kp7s
+authentication: {}
+authenticationType: null
+body: {}
+bodyType: null
+description: User statistics dashboard (public; active services, completed exchanges, credit balance, review average, totals earned/spent)
+headers: []
+method: GET
+name: Get User Stats
+sortPriority: 5000.0
+url: ${[ BASE_URL ]}/api/users/${[ USER_ID ]}/stats
+urlParameters: []

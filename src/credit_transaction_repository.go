@@ -47,3 +47,31 @@ func (repository *CreditTransactionRepository) BalanceByUserID(ctx context.Conte
 
 	return balance, nil
 }
+
+func (repository *CreditTransactionRepository) TotalEarnedByUserID(ctx context.Context, exec dbExecutor, userID int) (int, error) {
+	var total int
+
+	err := exec.QueryRowContext(ctx,
+		`SELECT COALESCE(SUM(amount), 0) FROM credit_transactions WHERE user_id = ? AND type = 'earn'`,
+		userID,
+	).Scan(&total)
+	if err != nil {
+		return 0, fmt.Errorf("compute total earned: %w", err)
+	}
+
+	return total, nil
+}
+
+func (repository *CreditTransactionRepository) TotalSpentByUserID(ctx context.Context, exec dbExecutor, userID int) (int, error) {
+	var total int
+
+	err := exec.QueryRowContext(ctx,
+		`SELECT COALESCE(SUM(ABS(amount)), 0) FROM credit_transactions WHERE user_id = ? AND type = 'spend'`,
+		userID,
+	).Scan(&total)
+	if err != nil {
+		return 0, fmt.Errorf("compute total spent: %w", err)
+	}
+
+	return total, nil
+}

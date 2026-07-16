@@ -17,7 +17,8 @@ type fakeServiceRepository struct {
 	createErr    error
 	updateErr    error
 	deleteErr    error
-	listErr      error
+	listErr            error
+	activeCount        int
 }
 
 func (fake *fakeServiceRepository) Create(ctx context.Context, exec dbExecutor, service Service) (Service, error) {
@@ -61,4 +62,8 @@ func (fake *fakeServiceRepository) List(ctx context.Context, exec dbExecutor, fi
 		return nil, fake.listErr
 	}
 	return fake.services, nil
+}
+
+func (fake *fakeServiceRepository) CountActiveByProviderID(ctx context.Context, exec dbExecutor, providerID int) (int, error) {
+	return fake.activeCount, nil
 }

@@ -41,12 +41,17 @@ type reviewUseCase interface {
 	ListForService(ctx context.Context, serviceID int) ([]Review, error)
 }
 
+type userStatsUseCase interface {
+	Get(ctx context.Context, userID int) (UserStats, error)
+}
+
 type api struct {
 	users     userUseCase
 	skills    skillUseCase
 	services  serviceUseCase
 	exchanges exchangeUseCase
 	reviews   reviewUseCase
+	stats     userStatsUseCase
 }
 
 func (a *api) registerRoutes(mux *http.ServeMux) {
@@ -74,5 +79,6 @@ func (a *api) registerRoutes(mux *http.ServeMux) {
 
 	mux.HandleFunc("POST /api/exchanges/{id}/review", a.requireAuth(a.handleCreateReview))
 	mux.HandleFunc("GET /api/users/{id}/reviews", a.handleListUserReviews)
+	mux.HandleFunc("GET /api/users/{id}/stats", a.handleGetUserStats)
 	mux.HandleFunc("GET /api/services/{id}/reviews", a.handleListServiceReviews)
 }

@@ -59,6 +59,21 @@ func (repository *ReviewRepository) ListByTargetUserID(ctx context.Context, exec
 	return scanReviews(rows)
 }
 
+func (repository *ReviewRepository) StatsByTargetUserID(ctx context.Context, exec dbExecutor, userID int) (float64, int, error) {
+	var averageRating float64
+	var reviewCount int
+
+	err := exec.QueryRowContext(ctx,
+		`SELECT COALESCE(AVG(rating), 0), COUNT(*) FROM reviews WHERE target_id = ?`,
+		userID,
+	).Scan(&averageRating, &reviewCount)
+	if err != nil {
+		return 0, 0, fmt.Errorf("compute review stats: %w", err)
+	}
+
+	return averageRating, reviewCount, nil
+}
+
 func (repository *ReviewRepository) ListByExchangeIDs(ctx context.Context, exec dbExecutor, exchangeIDs []int) ([]Review, error) {
 	if len(exchangeIDs) == 0 {
 		return []Review{}, nil

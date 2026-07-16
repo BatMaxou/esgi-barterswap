@@ -20,6 +20,7 @@ type fakeExchangeRepository struct {
 	listErr            error
 	serviceExchanges   []Exchange
 	listByServiceErr   error
+	completedCount     int
 }
 
 func (fake *fakeExchangeRepository) Create(ctx context.Context, exec dbExecutor, exchange Exchange) (Exchange, error) {
@@ -72,4 +73,8 @@ func (fake *fakeExchangeRepository) ListByServiceID(ctx context.Context, exec db
 		return nil, fake.listByServiceErr
 	}
 	return fake.serviceExchanges, nil
+}
+
+func (fake *fakeExchangeRepository) CountCompletedByUserID(ctx context.Context, exec dbExecutor, userID int) (int, error) {
+	return fake.completedCount, nil
 }

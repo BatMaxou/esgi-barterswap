@@ -10,6 +10,8 @@ type fakeReviewRepository struct {
 	exchangeReviews []Review
 	listUserErr     error
 	listExchangeErr error
+	averageRating   float64
+	reviewCount     int
 }
 
 func (fake *fakeReviewRepository) Create(ctx context.Context, exec dbExecutor, review Review) (Review, error) {
@@ -34,4 +36,8 @@ func (fake *fakeReviewRepository) ListByExchangeIDs(ctx context.Context, exec db
 		return nil, fake.listExchangeErr
 	}
 	return fake.exchangeReviews, nil
+}
+
+func (fake *fakeReviewRepository) StatsByTargetUserID(ctx context.Context, exec dbExecutor, userID int) (float64, int, error) {
+	return fake.averageRating, fake.reviewCount, nil
 }
