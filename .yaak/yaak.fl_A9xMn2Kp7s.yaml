@@ -1,0 +1,13 @@
+type: folder
+model: folder
+id: fl_A9xMn2Kp7s
+createdAt: 2026-07-16T00:00:00
+updatedAt: 2026-07-16T00:00:00
+workspaceId: wk_eEegibfaCL
+folderId: null
+authentication: {}
+authenticationType: null
+description: ''
+headers: []
+name: Stats
+sortPriority: 5000.0

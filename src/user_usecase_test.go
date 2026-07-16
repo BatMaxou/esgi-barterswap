@@ -44,6 +44,8 @@ type fakeCreditTransactionRepository struct {
 	createCalled bool
 	transaction  CreditTransaction
 	balance      int
+	totalEarned  int
+	totalSpent   int
 	createErr    error
 }
 
@@ -55,6 +57,14 @@ func (fake *fakeCreditTransactionRepository) Create(ctx context.Context, exec db
 
 func (fake *fakeCreditTransactionRepository) BalanceByUserID(ctx context.Context, exec dbExecutor, userID int) (int, error) {
 	return fake.balance, nil
+}
+
+func (fake *fakeCreditTransactionRepository) TotalEarnedByUserID(ctx context.Context, exec dbExecutor, userID int) (int, error) {
+	return fake.totalEarned, nil
+}
+
+func (fake *fakeCreditTransactionRepository) TotalSpentByUserID(ctx context.Context, exec dbExecutor, userID int) (int, error) {
+	return fake.totalSpent, nil
 }
 
 type fakeDatabase struct{}

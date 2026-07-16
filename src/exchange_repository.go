@@ -176,6 +176,21 @@ func (repository *ExchangeRepository) ListByServiceID(ctx context.Context, exec 
 	return exchanges, nil
 }
 
+func (repository *ExchangeRepository) CountCompletedByUserID(ctx context.Context, exec dbExecutor, userID int) (int, error) {
+	var count int
+
+	err := exec.QueryRowContext(ctx,
+		`SELECT COUNT(*) FROM exchanges
+		 WHERE status = ? AND (requester_id = ? OR owner_id = ?)`,
+		ExchangeStatusCompleted, userID, userID,
+	).Scan(&count)
+	if err != nil {
+		return 0, fmt.Errorf("count completed exchanges: %w", err)
+	}
+
+	return count, nil
+}
+
 func scanExchange(row scanner) (Exchange, error) {
 	var exchange Exchange
 	var createdAt time.Time

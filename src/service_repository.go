@@ -128,6 +128,20 @@ func (repository *ServiceRepository) List(ctx context.Context, exec dbExecutor, 
 	return services, nil
 }
 
+func (repository *ServiceRepository) CountActiveByProviderID(ctx context.Context, exec dbExecutor, providerID int) (int, error) {
+	var count int
+
+	err := exec.QueryRowContext(ctx,
+		`SELECT COUNT(*) FROM services WHERE provider_id = ? AND active = TRUE`,
+		providerID,
+	).Scan(&count)
+	if err != nil {
+		return 0, fmt.Errorf("count active services: %w", err)
+	}
+
+	return count, nil
+}
+
 // scanner abstracts reading a single row, whether it comes from a *sql.Row
 // (FindByID) or a *sql.Rows (List).
 type scanner interface {
