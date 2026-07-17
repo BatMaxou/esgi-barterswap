@@ -16,6 +16,8 @@ var ErrServiceCreditsInvalid = errors.New("credit cost must be strictly positive
 
 var ErrServiceNotFound = errors.New("service not found")
 
+var ErrServiceHasExchanges = errors.New("service is referenced by an exchange and cannot be deleted")
+
 type Service struct {
 	ID              int    `json:"id"`
 	ProviderID      int    `json:"provider_id"`

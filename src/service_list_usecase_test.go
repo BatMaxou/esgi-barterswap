@@ -8,7 +8,7 @@ import (
 func TestServiceUseCaseList(t *testing.T) {
 	t.Run("filters are forwarded to the repository", func(t *testing.T) {
 		services := &fakeServiceRepository{services: []Service{{ID: 1, Title: "Cours de Go"}}}
-		useCase := NewServiceUseCase(&fakeDatabase{}, services)
+		useCase := NewServiceUseCase(&fakeDatabase{}, services, &fakeServiceExchangeRepository{})
 
 		filter := ServiceFilter{Category: "Informatique", City: "Paris", Search: "Go"}
 		got, err := useCase.List(context.Background(), filter)

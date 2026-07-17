@@ -10,6 +10,10 @@ type serviceRepository interface {
 	List(ctx context.Context, exec dbExecutor, filter ServiceFilter) ([]Service, error)
 }
 
+type serviceExchangeRepository interface {
+	HasAnyForService(ctx context.Context, exec dbExecutor, serviceID int) (bool, error)
+}
+
 // ServiceFilter carries the search criteria applied server-side.
 // An empty criterion is ignored.
 type ServiceFilter struct {
@@ -19,13 +23,15 @@ type ServiceFilter struct {
 }
 
 type ServiceUseCase struct {
-	db       database
-	services serviceRepository
+	db        database
+	services  serviceRepository
+	exchanges serviceExchangeRepository
 }
 
-func NewServiceUseCase(db database, services serviceRepository) *ServiceUseCase {
+func NewServiceUseCase(db database, services serviceRepository, exchanges serviceExchangeRepository) *ServiceUseCase {
 	return &ServiceUseCase{
-		db:       db,
-		services: services,
+		db:        db,
+		services:  services,
+		exchanges: exchanges,
 	}
 }

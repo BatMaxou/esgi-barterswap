@@ -67,3 +67,16 @@ func (fake *fakeServiceRepository) List(ctx context.Context, exec dbExecutor, fi
 func (fake *fakeServiceRepository) CountActiveByProviderID(ctx context.Context, exec dbExecutor, providerID int) (int, error) {
 	return fake.activeCount, nil
 }
+
+// fakeServiceExchangeRepository is shared by the ServiceUseCase operation tests.
+type fakeServiceExchangeRepository struct {
+	hasAny    bool
+	hasAnyErr error
+}
+
+func (fake *fakeServiceExchangeRepository) HasAnyForService(ctx context.Context, exec dbExecutor, serviceID int) (bool, error) {
+	if fake.hasAnyErr != nil {
+		return false, fake.hasAnyErr
+	}
+	return fake.hasAny, nil
+}

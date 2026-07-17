@@ -9,7 +9,7 @@ import (
 func TestServiceUseCaseCreate(t *testing.T) {
 	t.Run("valid creation sets the provider and activates the ad", func(t *testing.T) {
 		services := &fakeServiceRepository{}
-		useCase := NewServiceUseCase(&fakeDatabase{}, services)
+		useCase := NewServiceUseCase(&fakeDatabase{}, services, &fakeServiceExchangeRepository{})
 
 		created, err := useCase.Create(context.Background(), 5, "  Cours de Go  ", "desc", "Informatique", "Paris", 60, 2)
 		if err != nil {
@@ -34,7 +34,7 @@ func TestServiceUseCaseCreate(t *testing.T) {
 
 	t.Run("invalid category -> ErrServiceCategoryInvalid without any write", func(t *testing.T) {
 		services := &fakeServiceRepository{}
-		useCase := NewServiceUseCase(&fakeDatabase{}, services)
+		useCase := NewServiceUseCase(&fakeDatabase{}, services, &fakeServiceExchangeRepository{})
 
 		_, err := useCase.Create(context.Background(), 5, "Cours", "", "Truc", "", 60, 2)
 		if !errors.Is(err, ErrServiceCategoryInvalid) {

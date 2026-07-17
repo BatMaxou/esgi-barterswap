@@ -135,7 +135,14 @@ curl -i -X DELETE http://localhost:8000/api/services/1 -H 'X-User-ID: 1'
 # 204 (no content)
 # 403 -> {"error":"action not allowed"}   (ad owned by another user)
 # 404 -> {"error":"service not found"}
+# 409 -> {"error":"service is referenced by an exchange and cannot be deleted"}
 ```
+
+An ad keeps its history: as soon as an exchange references it — even a `completed` or
+`rejected` one — deletion is refused with `409`. Deactivate it instead, with
+`PUT /api/services/{id}` and `{"active":false}`: no new exchange can be requested on it
+(`400`), and it stops counting in `active_services`, without breaking the exchanges that
+point to it. An inactive ad still appears in `GET /api/services`, flagged `"active":false`.
 
 ### A full exchange, end to end
 

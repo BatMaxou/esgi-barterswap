@@ -108,6 +108,20 @@ func (repository *ExchangeRepository) HasActiveForService(ctx context.Context, e
 	return exists, nil
 }
 
+func (repository *ExchangeRepository) HasAnyForService(ctx context.Context, exec dbExecutor, serviceID int) (bool, error) {
+	var exists bool
+
+	err := exec.QueryRowContext(ctx,
+		`SELECT EXISTS(SELECT 1 FROM exchanges WHERE service_id = ?)`,
+		serviceID,
+	).Scan(&exists)
+	if err != nil {
+		return false, fmt.Errorf("check exchanges for service: %w", err)
+	}
+
+	return exists, nil
+}
+
 func (repository *ExchangeRepository) List(ctx context.Context, exec dbExecutor, filter ExchangeFilter) ([]Exchange, error) {
 	query := `SELECT id, service_id, requester_id, owner_id, status, created_at, updated_at
 		 FROM exchanges`

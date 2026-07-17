@@ -27,6 +27,8 @@ func (a *api) handleDeleteService(w http.ResponseWriter, r *http.Request) {
 			writeError(w, http.StatusForbidden, err.Error())
 		case errors.Is(err, ErrServiceNotFound):
 			writeError(w, http.StatusNotFound, err.Error())
+		case errors.Is(err, ErrServiceHasExchanges):
+			writeError(w, http.StatusConflict, err.Error())
 		default:
 			writeError(w, http.StatusInternalServerError, "could not delete service")
 		}

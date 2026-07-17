@@ -33,7 +33,7 @@ func main() {
 
 	userUseCase := NewUserUseCase(transactor, userRepository, creditTransactionRepository)
 	skillUseCase := NewSkillUseCase(transactor, userRepository, skillRepository)
-	serviceUseCase := NewServiceUseCase(transactor, serviceRepository)
+	serviceUseCase := NewServiceUseCase(transactor, serviceRepository, exchangeRepository)
 	exchangeUseCase := NewExchangeUseCase(transactor, exchangeRepository, serviceRepository, creditTransactionRepository)
 	reviewUseCase := NewReviewUseCase(transactor, reviewRepository, exchangeRepository, userRepository, serviceRepository)
 	userStatsUseCase := NewUserStatsUseCase(transactor, userRepository, serviceRepository, exchangeRepository, reviewRepository, creditTransactionRepository)
