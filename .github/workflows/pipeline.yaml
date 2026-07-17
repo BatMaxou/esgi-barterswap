@@ -1,0 +1,42 @@
+name: Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  linters:
+    name: Linters
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Docker up
+        run: make install && make up
+
+      - name: Format
+        run: make fmt-check
+
+      - name: Vet
+        run: make vet
+
+  tests:
+    name: Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: linters
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Docker up
+        run: make install && make up
+
+      - name: Tests
+        run: make test

@@ -17,8 +17,8 @@ type fakeServiceRepository struct {
 	createErr    error
 	updateErr    error
 	deleteErr    error
-	listErr            error
-	activeCount        int
+	listErr      error
+	activeCount  int
 }
 
 func (fake *fakeServiceRepository) Create(ctx context.Context, exec dbExecutor, service Service) (Service, error) {
