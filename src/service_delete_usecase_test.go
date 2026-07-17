@@ -9,7 +9,7 @@ import (
 func TestServiceUseCaseDelete(t *testing.T) {
 	t.Run("delete by the owner", func(t *testing.T) {
 		services := &fakeServiceRepository{service: Service{ID: 7, ProviderID: 5}}
-		useCase := NewServiceUseCase(&fakeDatabase{}, services)
+		useCase := NewServiceUseCase(&fakeDatabase{}, services, &fakeServiceExchangeRepository{})
 
 		if err := useCase.Delete(context.Background(), 5, 7); err != nil {
 			t.Fatalf("unexpected error: %v", err)
@@ -21,7 +21,7 @@ func TestServiceUseCaseDelete(t *testing.T) {
 
 	t.Run("another user's ad -> ErrForbidden", func(t *testing.T) {
 		services := &fakeServiceRepository{service: Service{ID: 7, ProviderID: 5}}
-		useCase := NewServiceUseCase(&fakeDatabase{}, services)
+		useCase := NewServiceUseCase(&fakeDatabase{}, services, &fakeServiceExchangeRepository{})
 
 		err := useCase.Delete(context.Background(), 9, 7)
 		if !errors.Is(err, ErrForbidden) {
@@ -34,11 +34,25 @@ func TestServiceUseCaseDelete(t *testing.T) {
 
 	t.Run("ad not found -> ErrServiceNotFound", func(t *testing.T) {
 		services := &fakeServiceRepository{findErr: ErrServiceNotFound}
-		useCase := NewServiceUseCase(&fakeDatabase{}, services)
+		useCase := NewServiceUseCase(&fakeDatabase{}, services, &fakeServiceExchangeRepository{})
 
 		err := useCase.Delete(context.Background(), 5, 999)
 		if !errors.Is(err, ErrServiceNotFound) {
 			t.Fatalf("error = %v, want ErrServiceNotFound", err)
+		}
+	})
+
+	t.Run("ad referenced by an exchange -> ErrServiceHasExchanges", func(t *testing.T) {
+		services := &fakeServiceRepository{service: Service{ID: 7, ProviderID: 5}}
+		exchanges := &fakeServiceExchangeRepository{hasAny: true}
+		useCase := NewServiceUseCase(&fakeDatabase{}, services, exchanges)
+
+		err := useCase.Delete(context.Background(), 5, 7)
+		if !errors.Is(err, ErrServiceHasExchanges) {
+			t.Fatalf("error = %v, want ErrServiceHasExchanges", err)
+		}
+		if services.deleteCalled {
+			t.Error("no delete must happen while an exchange references the ad")
 		}
 	})
 }

@@ -9,7 +9,7 @@ import (
 func TestServiceUseCaseGet(t *testing.T) {
 	t.Run("service not found", func(t *testing.T) {
 		services := &fakeServiceRepository{findErr: ErrServiceNotFound}
-		useCase := NewServiceUseCase(&fakeDatabase{}, services)
+		useCase := NewServiceUseCase(&fakeDatabase{}, services, &fakeServiceExchangeRepository{})
 
 		_, err := useCase.Get(context.Background(), 999)
 		if !errors.Is(err, ErrServiceNotFound) {

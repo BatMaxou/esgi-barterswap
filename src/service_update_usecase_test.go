@@ -12,7 +12,7 @@ func TestServiceUseCaseUpdate(t *testing.T) {
 			ID: 7, ProviderID: 5, Title: "Ancien", Category: "Informatique",
 			DurationMinutes: 30, Credits: 1, Active: true, CreatedAt: "2026-01-01T00:00:00Z",
 		}}
-		useCase := NewServiceUseCase(&fakeDatabase{}, services)
+		useCase := NewServiceUseCase(&fakeDatabase{}, services, &fakeServiceExchangeRepository{})
 
 		updated, err := useCase.Update(context.Background(), 5, 7, "Nouveau", "desc", "Cuisine", "Lyon", 90, 3, nil)
 		if err != nil {
@@ -40,7 +40,7 @@ func TestServiceUseCaseUpdate(t *testing.T) {
 			ID: 7, ProviderID: 5, Title: "Ancien", Category: "Informatique",
 			DurationMinutes: 30, Credits: 1, Active: true, CreatedAt: "2026-01-01T00:00:00Z",
 		}}
-		useCase := NewServiceUseCase(&fakeDatabase{}, services)
+		useCase := NewServiceUseCase(&fakeDatabase{}, services, &fakeServiceExchangeRepository{})
 
 		inactive := false
 		updated, err := useCase.Update(context.Background(), 5, 7, "Ancien", "", "Informatique", "", 30, 1, &inactive)
@@ -54,7 +54,7 @@ func TestServiceUseCaseUpdate(t *testing.T) {
 
 	t.Run("another user's ad -> ErrForbidden", func(t *testing.T) {
 		services := &fakeServiceRepository{service: Service{ID: 7, ProviderID: 5}}
-		useCase := NewServiceUseCase(&fakeDatabase{}, services)
+		useCase := NewServiceUseCase(&fakeDatabase{}, services, &fakeServiceExchangeRepository{})
 
 		_, err := useCase.Update(context.Background(), 9, 7, "X", "", "Informatique", "", 30, 1, nil)
 		if !errors.Is(err, ErrForbidden) {
@@ -67,7 +67,7 @@ func TestServiceUseCaseUpdate(t *testing.T) {
 
 	t.Run("ad not found -> ErrServiceNotFound", func(t *testing.T) {
 		services := &fakeServiceRepository{findErr: ErrServiceNotFound}
-		useCase := NewServiceUseCase(&fakeDatabase{}, services)
+		useCase := NewServiceUseCase(&fakeDatabase{}, services, &fakeServiceExchangeRepository{})
 
 		_, err := useCase.Update(context.Background(), 5, 999, "X", "", "Informatique", "", 30, 1, nil)
 		if !errors.Is(err, ErrServiceNotFound) {
