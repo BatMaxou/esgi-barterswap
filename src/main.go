@@ -29,13 +29,15 @@ func main() {
 	skillRepository := NewSkillRepository()
 	serviceRepository := NewServiceRepository()
 	exchangeRepository := NewExchangeRepository()
+	reviewRepository := NewReviewRepository()
+
 	userUseCase := NewUserUseCase(transactor, userRepository, creditTransactionRepository)
 	skillUseCase := NewSkillUseCase(transactor, userRepository, skillRepository)
 	serviceUseCase := NewServiceUseCase(transactor, serviceRepository)
 	exchangeUseCase := NewExchangeUseCase(transactor, exchangeRepository, serviceRepository, creditTransactionRepository)
-	reviewRepository := NewReviewRepository()
 	reviewUseCase := NewReviewUseCase(transactor, reviewRepository, exchangeRepository, userRepository, serviceRepository)
 	userStatsUseCase := NewUserStatsUseCase(transactor, userRepository, serviceRepository, exchangeRepository, reviewRepository, creditTransactionRepository)
+
 	app := &api{
 		users:     userUseCase,
 		skills:    skillUseCase,
